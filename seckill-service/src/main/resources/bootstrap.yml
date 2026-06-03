@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: seckill-service
+  profiles:
+    active: local
+  cloud:
+    nacos:
+      server-addr: ${dm.nacos.host:localhost}:8848
+      config:
+        file-extension: yaml
+#        shared-configs:
+#          - dataId: shared-jdbc.yaml
+#          - dataId: shared-log.yaml
+#          - dataId: shared-swagger.yaml

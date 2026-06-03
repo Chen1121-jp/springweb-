@@ -1,0 +1,15 @@
+server:
+  port: 8088
+
+spring:
+  application:
+    name: chat-service
+  profiles:
+    active: local
+  cloud:
+    nacos:
+      server-addr: ${dm.nacos.host:localhost}:8848
+
+logging:
+  level:
+    com.digital.mall: debug

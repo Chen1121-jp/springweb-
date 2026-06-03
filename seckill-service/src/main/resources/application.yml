@@ -1,0 +1,43 @@
+server:
+  port: 8087
+
+spring:
+  application:
+    name: seckill-service
+  profiles:
+    active: local
+  datasource:
+    url: jdbc:postgresql://${dm.db.host:localhost}:5432/digital_mall?currentSchema=seckill
+    driver-class-name: org.postgresql.Driver
+    username: ${dm.db.username:postgres}
+    password: ${dm.db.password:123456}
+  redis:
+    host: ${dm.redis.host:localhost}
+    port: 6379
+    database: 7
+    timeout: 10000ms
+    lettuce:
+      pool:
+        max-active: 16
+        max-idle: 8
+        min-idle: 2
+        max-wait: 10000ms
+  rabbitmq:
+    host: ${dm.mq.host:localhost}
+    port: 5672
+    virtual-host: ${dm.mq.vhost:/}
+    username: ${dm.mq.username:guest}
+    password: ${dm.mq.password:guest}
+  cloud:
+    nacos:
+      server-addr: ${dm.nacos.host:localhost}:8848
+
+mybatis-plus:
+  global-config:
+    db-config:
+      update-strategy: not_null
+      id-type: assign_id
+
+logging:
+  level:
+    com.digital.mall: debug

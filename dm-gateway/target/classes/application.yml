@@ -1,0 +1,62 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: gateway
+  cloud:
+    nacos:
+      server-addr: ${dm.nacos.host:localhost}:8848
+      discovery:
+        namespace: ${dm.nacos.namespace:}
+    gateway:
+      routes:
+        - id: item
+          uri: lb://item-service
+          predicates:
+            - Path=/items/**,/search/**
+        - id: cart
+          uri: lb://cart-service
+          predicates:
+            - Path=/carts/**
+        - id: user
+          uri: lb://user-service
+          predicates:
+            - Path=/users/**,/addresses/**
+        - id: trade
+          uri: lb://trade-service
+          predicates:
+            - Path=/orders/**
+        - id: pay
+          uri: lb://pay-service
+          predicates:
+            - Path=/pay-orders/**
+        - id: seckill
+          uri: lb://seckill-service
+          predicates:
+            - Path=/seckillItem/**,/seckillOrder/**
+        - id: chat
+          uri: lb://chat-service
+          predicates:
+            - Path=/chat/**
+        - id: file
+          uri: lb://file-service
+          predicates:
+            - Path=/files/**
+
+dm:
+  jwt:
+    location: classpath:hmall.jks
+    alias: hmall
+    password: hmall123
+    tokenTTL: 30m
+  auth:
+    excludePaths:
+      - /search/**
+      - /users/login
+      - /users/register
+      - /users/code
+      - /users/loginByCode
+      - /items/**
+      - /hi
+      - /files/view/**

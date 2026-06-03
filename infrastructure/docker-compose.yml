@@ -1,0 +1,77 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: dm-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: digital_mall
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./sql/01-item-schema.sql:/docker-entrypoint-initdb.d/01-item-schema.sql
+      - ./sql/02-user-schema.sql:/docker-entrypoint-initdb.d/02-user-schema.sql
+      - ./sql/03-cart-schema.sql:/docker-entrypoint-initdb.d/03-cart-schema.sql
+      - ./sql/04-order-schema.sql:/docker-entrypoint-initdb.d/04-order-schema.sql
+      - ./sql/05-pay-schema.sql:/docker-entrypoint-initdb.d/05-pay-schema.sql
+      - ./sql/06-seckill-schema.sql:/docker-entrypoint-initdb.d/06-seckill-schema.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  nacos:
+    image: nacos/nacos-server:v2.3.2
+    container_name: dm-nacos
+    environment:
+      MODE: standalone
+      PREFER_HOST_MODE: hostname
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+    depends_on:
+      postgres:
+        condition: service_started
+
+  redis:
+    image: redis:7-alpine
+    container_name: dm-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: dm-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmqdata:/var/lib/rabbitmq
+
+  minio:
+    image: minio/minio:latest
+    container_name: dm-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - miniodata:/data
+
+volumes:
+  pgdata:
+  redisdata:
+  rabbitmqdata:
+  miniodata:

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.digital.mall.user.mapper.UserMapper">
+
+    <!-- 扣减余额，利用 balance >= amount 保证不超扣 -->
+    <update id="updateMoney">
+        UPDATE "user"."user"
+        SET balance = balance - #{amount}
+        WHERE id = #{userId}
+          AND balance >= #{amount}
+    </update>
+
+</mapper>

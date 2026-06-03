@@ -1,0 +1,6 @@
+com.digital.mall.common.advice.CommonExceptionAdvice
+com.digital.mall.common.config.MvcConfig
+com.digital.mall.common.config.MyBatisConfig
+com.digital.mall.common.config.JsonConfig
+com.digital.mall.common.config.MqConfig
+com.digital.mall.common.config.RedisIdWorker

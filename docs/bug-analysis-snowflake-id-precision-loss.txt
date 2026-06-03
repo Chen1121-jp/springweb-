@@ -1,0 +1,115 @@
+================================================================================
+ Bug 分析：支付页面金额显示为 0，支付时报"内部异常"
+ 日期：2026-06-03
+ 项目：digital-mall（仿 hmall 的数字商城）
+================================================================================
+
+## 现象
+
+1. 提交订单后，跳转到支付页面，应付金额显示为 ¥0.00
+2. 点击"确认支付"后，报"内部异常"，无法完成支付
+3. 同样的操作流程在 hmall 项目中正常
+
+## 根因：JavaScript Snowflake ID 精度丢失
+
+----------------------------------------------------------------------
+关键证据（来自用户提供的实际请求数据）
+----------------------------------------------------------------------
+
+POST /pay-orders 的响应返回 payOrderId：2061832498029350914
+支付请求 URL：/pay-orders/2061832498029351000
+                            ^^^^            ^^^^
+                          最后4位不一致！ ...914 变成了 ...000
+
+----------------------------------------------------------------------
+根本原因
+----------------------------------------------------------------------
+
+MyBatis-Plus 的 IdType.ASSIGN_ID 使用 Snowflake 算法生成 19 位 Long 型 ID，
+例如：2061832498029350914
+
+JavaScript 的 Number 类型是 IEEE 754 双精度浮点数，安全整数范围：
+  Number.MAX_SAFE_INTEGER = 9007199254740991（16位）
+
+19 位的 Snowflake ID 远超此范围，当 axios 用 JSON.parse 解析后端返回的
+JSON 数字时，低位精度丢失，ID 被四舍五入。
+
+----------------------------------------------------------------------
+完整 bug 链路（逐步追踪）
+----------------------------------------------------------------------
+
+第 1 步：order-confirm.html 提交订单
+  POST /orders → 后端返回订单 ID（Long，19 位）
+  → JS 解析 JSON: 2061832496653594600 → Number 精度丢失
+  → 跳转 pay.html?orderId=被截断的ID
+
+第 2 步：pay.html 查询订单（获取金额）
+  GET /orders/{被截断的orderId}
+  → 后端 getById(被截断的ID) → 查不到订单 → 返回 null
+  → order.totalFee 为 undefined
+  → payAmount = (order && order.totalFee) ? order.totalFee : 0
+  → amount = 0  ← 金额变 0 的原因！
+
+第 3 步：创建支付单
+  POST /pay-orders  { bizOrderNo: 被截断的orderId, amount: 0, ... }
+  → 后端创建 PayOrder，amount=0
+  → 返回 payOrderId: 2061832498029350914
+
+第 4 步：查询支付单详情
+  GET /pay-orders/biz/{被截断的orderId}
+  → 返回 PayOrderDTO，amount=0
+  → 页面显示 ¥0.00
+
+第 5 步：用户点支付
+  POST /pay-orders/2061832498029351000  ← JS 精度丢失后的错误 ID
+  → 后端 getById(错误ID) → 查不到支付单 → 抛异常
+  → CommonExceptionAdvice 捕获 → 返回 "服务器内部错误"
+  → 前端显示"内部异常"
+
+----------------------------------------------------------------------
+为什么 hmall 没问题？
+----------------------------------------------------------------------
+
+hmall 的 pay.html 在 POST /pay-orders 时加了 transformResponse：
+
+  axios.post("/pay-orders", {...}, {
+      transformResponse: data => data   // ← 返回原始字符串，不经过 JSON.parse
+  })
+
+这样 payOrderId 保持为字符串 "2061832498029350914"，精度不会丢失。
+
+而 digital-mall 的 pay.html 没有这个配置，响应被 JSON.parse 解析为 Number。
+
+----------------------------------------------------------------------
+最终解决方案（hmall 风格，已实施）
+----------------------------------------------------------------------
+
+采用"后端 + 前端"组合修复，共改 7 个文件：
+
+1. 后端 JsonConfig（参考 hmall）:
+   dm-common/.../JsonConfig.java
+   → 用 Jackson2ObjectMapperBuilderCustomizer 代替自定义 ObjectMapper
+   → 添加 Long/BigInteger → String 序列化器
+   → 所有 Snowflake ID 以 JSON String 传输，JavaScript 精度不丢
+
+2. 前端 cart.html:
+   → goCheckout() 改用 sessionStorage 存储完整购物车对象
+   → 不再用 URL 参数 + parseInt 传递 Snowflake ID
+
+3. 前端 order-confirm.html:
+   → 从 sessionStorage 读购物车数据（不再从 URL 解析 + parseInt）
+   → 移除 ids[] 数据和相关解析逻辑
+
+4. 前端 pay.html:
+   → POST /pay-orders 加 transformResponse（double insurance）
+   → POST /pay-orders/{id} 加 transformResponse
+
+5. nginx 副本同步:
+   → 以上 3 个前端文件的改动同步到 hmall-nginx/digital-mall-portal/
+
+为什么只改后端 JsonConfig 不够：
+  如果只改后端，cart item ID 变为正确 String，但 order-confirm.html
+  的 parseInt 会将其截断为 corrupted Number，与后端返回的正确 String
+  做 idSet 匹配时不相等 → "没有待结算的商品"
+
+================================================================================

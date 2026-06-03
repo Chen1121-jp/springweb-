@@ -1,0 +1,4 @@
+com\digital\mall\file\config\MinioConfig.class
+com\digital\mall\file\config\MinioProperties.class
+com\digital\mall\file\controller\FileController.class
+com\digital\mall\file\FileApplication.class

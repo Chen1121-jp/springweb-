@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>数字商城 - 确认支付</title>
+  <link rel="stylesheet" href="css/digital-mall.css">
+</head>
+<body>
+<div id="app">
+  <top-nav page="pay"></top-nav>
+
+  <div class="pay-page">
+    <div class="container">
+
+      <!-- Loading state -->
+      <div class="loading" v-if="loading">
+        <div class="spinner"></div>
+        <p>正在加载支付信息...</p>
+      </div>
+
+      <!-- Error / no-order state -->
+      <div class="pay-card" v-if="!loading && error" style="text-align:center;">
+        <div class="empty-state" style="padding:48px 0;">
+          <div class="icon">{{ errorIcon }}</div>
+          <h3 style="margin-bottom:8px;">{{ errorTitle }}</h3>
+          <p style="color:var(--text-light);margin-bottom:28px;">{{ error }}</p>
+          <a v-if="errorAction === 'back'" :href="'/orderconfirm.html?orderId=' + orderId" class="btn btn-primary">← 返回订单确认</a>
+          <a v-else href="/" class="btn btn-primary">🏠 返回首页</a>
+        </div>
+      </div>
+
+      <!-- Payment card (normal state) -->
+      <div class="pay-card" v-if="!loading && !error && !expired" style="animation:fadeInUp .5s var(--ease);">
+
+        <!-- Order header row -->
+        <div class="flex-between mb-24">
+          <div>
+            <div style="font-size:12px;color:var(--text-light);margin-bottom:4px;">订单编号</div>
+            <div style="font:600 15px 'Nunito Sans',sans-serif;color:var(--text);">📦 {{ orderNo }}</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:12px;color:var(--text-light);margin-bottom:4px;">支付剩余时间</div>
+            <div :style="countdownStyle">
+              ⏱ {{ pad(minutes) }} : {{ pad(seconds) }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Divider -->
+        <div style="height:1px;background:var(--border-light);margin-bottom:28px;"></div>
+
+        <!-- Large amount -->
+        <div style="text-align:center;padding:32px 0;">
+          <div style="font-size:13px;color:var(--text-light);margin-bottom:8px;">应付款金额</div>
+          <div style="font:800 48px/1 'Nunito Sans',sans-serif;color:var(--primary);">
+            <span style="font-size:.5em;vertical-align:super;margin-right:4px;">¥</span>{{ amountYuan }}
+          </div>
+        </div>
+
+        <!-- Divider -->
+        <div style="height:1px;background:var(--border-light);margin-bottom:24px;"></div>
+
+        <!-- Payment method -->
+        <div class="form-group">
+          <label class="form-label">💳 支付方式</label>
+          <div class="radio-card selected" style="width:100%;cursor:default;">
+            <span style="font-size:20px;">💰</span>
+            <span>余额支付</span>
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+          <label class="form-label">🔐 支付密码</label>
+          <input
+            type="password"
+            class="input input-lg"
+            placeholder="请输入支付密码"
+            v-model="password"
+            @keyup.enter="confirmPay"
+            :disabled="paying"
+            autocomplete="off"
+          >
+        </div>
+
+        <!-- Pay error alert -->
+        <div class="alert alert-error" v-if="payError" style="margin-bottom:16px;">
+          ⚠ {{ payError }}
+        </div>
+
+        <!-- Submit button -->
+        <button
+          class="btn btn-primary btn-lg btn-block"
+          :style="payBtnStyle"
+          :class="{ 'btn--success': paySuccess }"
+          @click="confirmPay"
+          :disabled="!password || paying"
+        >
+          <span v-if="paying" style="display:inline-flex;align-items:center;">
+            <span class="spinner" style="width:20px;height:20px;border-width:3px;margin-right:10px;display:inline-block;"></span>
+            支付中...
+          </span>
+          <span v-else>✅ 确认支付</span>
+        </button>
+
+        <!-- Back link -->
+        <div class="text-center mt-24">
+          <a :href="'/orderconfirm.html?orderId=' + orderId" class="btn btn-ghost">← 返回订单确认</a>
+        </div>
+
+      </div>
+
+      <!-- Expired state -->
+      <div class="pay-card" v-if="!loading && expired" style="text-align:center;">
+        <div class="empty-state" style="padding:48px 0;">
+          <div class="icon">⏰</div>
+          <h3 style="margin-bottom:8px;">支付已超时</h3>
+          <p style="color:var(--text-light);margin-bottom:28px;">订单支付时间已过，请重新下单</p>
+          <div style="display:flex;gap:12px;justify-content:center;">
+            <a :href="'/orderconfirm.html?orderId=' + orderId" class="btn btn-outline">← 返回订单确认</a>
+            <a href="/" class="btn btn-primary">🏠 返回首页</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>&copy; 2026 数字商城 Digital Mall. All rights reserved.</p>
+  </footer>
+</div>
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="js/common.js"></script>
+<script src="js/top.js"></script>
+<script>
+const { createApp } = Vue
+createApp({
+  data() {
+    return {
+      util,
+      loading: true,
+      error: '',
+      errorIcon: '⚠',
+      errorTitle: '加载失败',
+      errorAction: '',
+      expired: false,
+      orderId: '',
+      orderNo: '',
+      amount: 0,
+      payOrderId: '',
+      minutes: 30,
+      seconds: 0,
+      password: '',
+      paying: false,
+      payError: '',
+      paySuccess: false,
+      timer: null,
+    }
+  },
+  computed: {
+    amountYuan() {
+      return util.formatPrice(this.amount)
+    },
+    countdownStyle() {
+      if (this.minutes < 5) {
+        return {
+          font: '700 22px/1 "Nunito Sans",sans-serif',
+          color: 'var(--danger)',
+          animation: 'badgePop .4s var(--spring) infinite',
+        }
+      }
+      return {
+        font: '600 22px/1 "Nunito Sans",sans-serif',
+        color: 'var(--text-secondary)',
+      }
+    },
+    payBtnStyle() {
+      return {
+        fontSize: '18px',
+        padding: '16px 0',
+        borderRadius: 'var(--radius)',
+        letterSpacing: '1px',
+      }
+    },
+  },
+  methods: {
+    pad(n) {
+      return String(n).padStart(2, '0')
+    },
+
+    formatCountdownDisplay() {
+      // Used in template via pad()
+    },
+
+    createPayOrder() {
+      this.loading = true
+      var self = this
+
+      // 1. 先查订单获取真实金额
+      axios.get('/orders/' + this.orderId)
+        .then(function(order) {
+          var payAmount = (order && order.totalFee) ? order.totalFee : 0
+          // 2. 创建支付单（transformResponse 防止 Snowflake ID 精度丢失）
+          return axios.post('/pay-orders', {
+            bizOrderNo: self.orderId,
+            amount: payAmount,
+            payChannelCode: 'balance',
+            payType: 5,
+            orderInfo: '余额支付'
+          }, {
+            transformResponse: [function (data) { return data; }]
+          })
+        })
+        .then(function(resp) {
+          self.payOrderId = resp
+          return axios.get('/pay-orders/biz/' + self.orderId)
+        })
+        .then(function(data) {
+          self.loading = false
+          self.orderNo = data.payOrderNo ? String(data.payOrderNo) : ('D' + Date.now())
+          self.amount = data.amount || 0
+
+          var deadline
+          if (data.payOverTime) {
+            deadline = new Date(data.payOverTime).getTime()
+          } else {
+            deadline = Date.now() + 30 * 60 * 1000
+          }
+          var remaining = Math.max(0, deadline - Date.now())
+          self.minutes = Math.floor(remaining / 60000)
+          self.seconds = Math.floor((remaining % 60000) / 1000)
+
+          if (self.minutes === 0 && self.seconds === 0) {
+            self.expired = true
+            return
+          }
+          self.startCountdown()
+        })
+        .catch(function(err) {
+          self.loading = false
+          var data = err.response && err.response.data
+          var msg = (data && (data.message || data.msg)) || '创建支付订单失败，请返回重试'
+          self.error = msg
+          self.errorIcon = '❌'
+          self.errorTitle = '创建支付订单失败'
+          self.errorAction = 'back'
+        })
+    },
+
+    startCountdown() {
+      if (this.timer) clearInterval(this.timer)
+      this.timer = setInterval(function() {
+        if (this.seconds > 0) {
+          this.seconds--
+        } else if (this.minutes > 0) {
+          this.minutes--
+          this.seconds = 59
+        } else {
+          clearInterval(this.timer)
+          this.timer = null
+          this.expired = true
+        }
+      }.bind(this), 1000)
+    },
+
+    confirmPay() {
+      if (!this.password || this.paying) return
+      this.paying = true
+      this.payError = ''
+
+      axios.post('/pay-orders/' + this.payOrderId, { pw: this.password }, {
+        transformResponse: [function (data) { return data; }]
+      })
+        .then(function() {
+          clearInterval(this.timer)
+          this.timer = null
+          this.paySuccess = true
+          this.paying = false
+          // Brief delay for success visual feedback, then redirect
+          setTimeout(function() {
+            location.href = '/paysuccess.html?orderId=' + this.orderId
+          }.bind(this), 400)
+        }.bind(this))
+        .catch(function(err) {
+          this.paying = false
+          this.password = ''
+          var data = err.response && err.response.data
+          var msg = (data && (data.message || data.msg)) || '支付失败，请检查密码后重试'
+          this.payError = msg
+        }.bind(this))
+    },
+  },
+  mounted() {
+    this.orderId = util.getUrlParam('orderId')
+    if (!this.orderId) {
+      this.loading = false
+      this.error = '缺少订单参数，请从订单确认页进入'
+      this.errorIcon = '❓'
+      this.errorTitle = '参数缺失'
+      this.errorAction = ''
+      return
+    }
+    this.createPayOrder()
+  },
+  beforeUnmount() {
+    if (this.timer) {
+      clearInterval(this.timer)
+      this.timer = null
+    }
+  }
+}).component('top-nav', TopNav).mount('#app')
+</script>
+</body>
+</html>

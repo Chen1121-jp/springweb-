@@ -1,0 +1,40 @@
+package com.digital.mall.item.controller;
+
+import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.digital.mall.common.domain.PageDTO;
+import com.digital.mall.item.domain.dto.ItemDTO;
+import com.digital.mall.item.domain.po.Item;
+import com.digital.mall.item.domain.query.ItemPageQuery;
+import com.digital.mall.item.service.IItemService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@Tag(name = "搜索相关接口")
+@RestController
+@RequestMapping("/search")
+@RequiredArgsConstructor
+public class SearchController {
+
+    private final IItemService itemService;
+
+    @Operation(summary = "搜索商品")
+    @GetMapping("/list")
+    public PageDTO<ItemDTO> search(ItemPageQuery query) {
+        Page<Item> result = itemService.lambdaQuery()
+                .and(StrUtil.isNotBlank(query.getKey()), wrapper ->
+                        wrapper.like(Item::getName, query.getKey())
+                                .or()
+                                .like(Item::getBrand, query.getKey()))
+                .eq(StrUtil.isNotBlank(query.getBrand()), Item::getBrand, query.getBrand())
+                .eq(StrUtil.isNotBlank(query.getCategory()), Item::getCategory, query.getCategory())
+                .eq(Item::getStatus, 1)
+                .between(query.getMaxPrice() != null, Item::getPrice, query.getMinPrice(), query.getMaxPrice())
+                .page(query.toMpPage("update_time", false));
+        return PageDTO.of(result, ItemDTO.class);
+    }
+}

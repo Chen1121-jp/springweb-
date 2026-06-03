@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>数字商城 - 确认订单</title>
+  <link rel="stylesheet" href="css/digital-mall.css">
+  <style>
+    /* ==============================
+       Order Confirm — page-specific overrides
+       ============================== */
+    .order-page {
+      padding: 40px 0 60px;
+      min-height: calc(100vh - 64px - 60px);
+    }
+
+    .order-layout {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 28px;
+      align-items: start;
+    }
+    @media (max-width: 860px) {
+      .order-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .order-main { min-width: 0; }
+
+    /* ---- Address Cards ---- */
+    .address-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .address-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 18px 22px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all .22s var(--ease);
+      background: var(--card);
+      min-width: 260px;
+      flex: 0 0 auto;
+      position: relative;
+    }
+    .address-card:hover {
+      border-color: var(--primary-dim);
+      box-shadow: var(--shadow);
+    }
+    .address-card.selected {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      box-shadow: 0 0 0 4px rgba(255,107,53,.06);
+    }
+    .address-card .addr-radio {
+      width: 22px; height: 22px; border-radius: 50%;
+      border: 2px solid var(--border);
+      flex-shrink: 0; margin-top: 2px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all .2s var(--ease);
+      font-size: 12px;
+    }
+    .address-card.selected .addr-radio {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: #fff;
+    }
+    .address-card .addr-info { line-height: 1.6; }
+    .address-card .addr-contact {
+      font: 700 15px 'Nunito Sans', sans-serif;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+    .address-card .addr-contact .addr-mobile {
+      font-weight: 500; color: var(--text-secondary);
+      margin-left: 12px; font-size: 13px;
+    }
+    .address-card .addr-full {
+      font-size: 13px; color: var(--text-secondary);
+      word-break: break-all;
+    }
+    .address-card .addr-tag {
+      display: inline-block;
+      font-size: 11px; font-weight: 600;
+      padding: 2px 8px; border-radius: 4px;
+      background: var(--primary-light);
+      color: var(--primary);
+      margin-left: 8px;
+    }
+
+    .address-add-trigger {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 18px 28px;
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      color: var(--text-light);
+      font: 600 14px 'Nunito Sans', sans-serif;
+      transition: all .22s var(--ease);
+      background: transparent;
+      min-width: 160px;
+      flex: 0 0 auto;
+    }
+    .address-add-trigger:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    /* ---- Address Form Card ---- */
+    .address-form-card {
+      background: var(--card);
+      border: 2px solid var(--primary-dim);
+      border-radius: var(--radius);
+      padding: 28px 28px 20px;
+      margin-top: 8px;
+      animation: fadeInUp .35s var(--ease);
+    }
+    .address-form-card .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 500px) {
+      .address-form-card .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+    .address-form-card .form-actions {
+      display: flex; gap: 12px; justify-content: flex-end;
+      margin-top: 8px;
+    }
+
+    /* ---- Order Items ---- */
+    .order-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .order-item:last-child { border-bottom: none; }
+    .order-item img {
+      width: 80px; height: 80px;
+      border-radius: var(--radius-sm);
+      object-fit: cover;
+      background: var(--border-light);
+      flex-shrink: 0;
+    }
+    .order-item .item-info {
+      flex: 1; min-width: 0;
+    }
+    .order-item .item-name {
+      font: 600 15px/1.4 'Nunito Sans', sans-serif;
+      color: var(--text);
+      display: -webkit-box;
+      -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+      overflow: hidden;
+      margin-bottom: 4px;
+    }
+    .order-item .item-meta {
+      font-size: 13px; color: var(--text-light);
+      display: flex; align-items: center; gap: 16px;
+    }
+    .order-item .item-price {
+      text-align: right; flex-shrink: 0;
+    }
+    .order-item .item-price .price {
+      font-size: 20px;
+    }
+    .order-item .item-price .qty {
+      font-size: 13px; color: var(--text-light);
+    }
+
+    /* ---- Payment ---- */
+    .pay-method-list {
+      display: flex; gap: 12px; flex-wrap: wrap;
+    }
+    .pay-method-card {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 24px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all .22s var(--ease);
+      font: 600 15px 'Nunito Sans', sans-serif;
+      background: var(--card);
+      color: var(--text);
+    }
+    .pay-method-card:hover {
+      border-color: var(--primary-dim);
+    }
+    .pay-method-card.selected {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+    .pay-method-card .pm-icon { font-size: 22px; }
+    .pay-method-card .pm-check {
+      width: 22px; height: 22px; border-radius: 50%;
+      border: 2px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; transition: all .2s var(--ease);
+    }
+    .pay-method-card.selected .pm-check {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: #fff;
+    }
+
+    /* ---- Summary Sidebar ---- */
+    .order-sidebar {
+      position: sticky; top: 88px;
+    }
+    .summary-card {
+      background: var(--card);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      padding: 28px;
+    }
+    .summary-card .summary-title {
+      font: 700 18px 'Nunito Sans', sans-serif;
+      color: var(--text);
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1.5px solid var(--border-light);
+    }
+    .summary-row {
+      display: flex; justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      font-size: 14px; color: var(--text-secondary);
+    }
+    .summary-row--total {
+      margin-top: 12px; padding-top: 18px;
+      border-top: 2px solid var(--primary-dim);
+      font: 800 22px 'Nunito Sans', sans-serif;
+      color: var(--primary);
+    }
+    .summary-row--total .summary-label { font-weight: 700; color: var(--text); }
+    .summary-card .btn-submit {
+      width: 100%; margin-top: 24px;
+      padding: 16px 0; font-size: 17px;
+      font-weight: 700; letter-spacing: 2px;
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, var(--primary), #FF8D5C);
+      color: #fff; border: none; cursor: pointer;
+      box-shadow: 0 6px 22px rgba(255,107,53,.3);
+      transition: all .35s var(--ease);
+      font-family: 'Nunito Sans', sans-serif;
+    }
+    .summary-card .btn-submit:hover {
+      background: linear-gradient(135deg, var(--primary-dark), #FF6B35);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(255,107,53,.4);
+    }
+    .summary-card .btn-submit:active {
+      transform: translateY(-1px) scale(.98);
+    }
+    .summary-card .btn-submit:disabled {
+      opacity: .5; cursor: not-allowed; transform: none !important;
+      box-shadow: 0 4px 14px rgba(255,107,53,.15) !important;
+    }
+
+    /* ---- Safety note ---- */
+    .safety-note {
+      text-align: center; margin-top: 16px;
+      font-size: 12px; color: var(--text-light);
+      display: flex; align-items: center; justify-content: center; gap: 4px;
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+  <top-nav page="order"></top-nav>
+
+  <div class="order-page container">
+    <!-- Loading -->
+    <div v-if="pageLoading" class="loading">
+      <div class="spinner"></div>
+      <p>加载订单信息…</p>
+    </div>
+
+    <!-- Error -->
+    <div v-else-if="pageError" class="empty-state">
+      <div class="icon">⚠️</div>
+      <h3>{{ pageError }}</h3>
+      <p class="mt-8">
+        <a href="/cart.html" class="btn btn-outline" style="display:inline-flex;margin-top:12px;">🛒 返回购物车</a>
+      </p>
+    </div>
+
+    <!-- Main content -->
+    <div v-else class="order-layout">
+
+      <!-- ===== LEFT COLUMN ===== -->
+      <div class="order-main">
+
+        <!-- Section 1: Shipping Address -->
+        <div class="order-section">
+          <div class="order-section__title">📦 收货地址</div>
+
+          <!-- Address cards -->
+          <div class="address-list" v-if="addresses.length > 0">
+            <div
+              v-for="addr in addresses"
+              :key="addr.id"
+              class="address-card"
+              :class="{ selected: selectedAddressId === addr.id }"
+              @click="selectedAddressId = addr.id"
+            >
+              <div class="addr-radio">{{ selectedAddressId === addr.id ? '✓' : '' }}</div>
+              <div class="addr-info">
+                <div class="addr-contact">
+                  {{ addr.contact }}
+                  <span class="addr-mobile">{{ addr.mobile }}</span>
+                  <span v-if="addr.isDefault" class="addr-tag">默认</span>
+                </div>
+                <div class="addr-full">{{ addr.province }}{{ addr.city }} {{ addr.detail }}</div>
+              </div>
+            </div>
+
+            <!-- Add address trigger -->
+            <div
+              class="address-add-trigger"
+              @click="openAddressForm"
+              v-if="!showAddressForm"
+            >
+              ➕ 新增地址
+            </div>
+          </div>
+
+          <!-- Empty address state -->
+          <div v-if="addresses.length === 0 && !showAddressForm" class="card" style="padding:32px;text-align:center;">
+            <div style="font-size:42px;margin-bottom:12px;">📦</div>
+            <p style="color:var(--text-secondary);margin-bottom:16px;">暂无收货地址，请添加</p>
+            <button class="btn btn-primary" @click="openAddressForm">➕ 新增地址</button>
+          </div>
+
+          <!-- Address form -->
+          <div v-if="showAddressForm" class="address-form-card">
+            <div class="form-group">
+              <label class="form-label">👤 收货人</label>
+              <input class="input" v-model="newAddress.contact" placeholder="请输入收货人姓名">
+            </div>
+            <div class="form-group">
+              <label class="form-label">📱 手机号码</label>
+              <input class="input" v-model="newAddress.mobile" placeholder="请输入手机号码" maxlength="11">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">🗺️ 省份</label>
+                <input class="input" v-model="newAddress.province" placeholder="省份">
+              </div>
+              <div class="form-group">
+                <label class="form-label">🏙️ 城市</label>
+                <input class="input" v-model="newAddress.city" placeholder="城市">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">📍 详细地址</label>
+              <input class="input" v-model="newAddress.detail" placeholder="街道、门牌号等">
+            </div>
+            <div v-if="addressFormError" class="alert alert-error" style="margin-bottom:12px;">{{ addressFormError }}</div>
+            <div class="form-actions">
+              <button class="btn btn-ghost" @click="cancelAddressForm">取消</button>
+              <button class="btn btn-primary" @click="saveAddress" :disabled="addressSaving">
+                {{ addressSaving ? '保存中…' : '💾 保存地址' }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 2: Order Items -->
+        <div class="order-section">
+          <div class="order-section__title">🛒 订单商品（共 {{ orderItems.length }} 件）</div>
+          <div class="card" style="padding:4px 20px;">
+            <div v-for="(item, idx) in orderItems" :key="item.id" class="order-item">
+              <img :src="item.productImage || item.image || ''" :alt="item.productName || item.name" @error="imgFallback">
+              <div class="item-info">
+                <div class="item-name">{{ item.productName || item.name }}</div>
+                <div class="item-meta">
+                  <span>💰 {{ util.formatPrice(item.price) }}</span>
+                </div>
+              </div>
+              <div class="item-price">
+                <div class="price">{{ util.formatPrice(item.price * item.num) }}</div>
+                <div class="qty">× {{ item.num }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3: Payment Method -->
+        <div class="order-section">
+          <div class="order-section__title">💰 支付方式</div>
+          <div class="pay-method-list">
+            <div
+              class="pay-method-card"
+              :class="{ selected: paymentType === 3 }"
+              @click="paymentType = 3"
+            >
+              <div class="pm-check">{{ paymentType === 3 ? '✓' : '' }}</div>
+              <span class="pm-icon">💰</span>
+              <span>余额支付</span>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /order-main -->
+
+      <!-- ===== RIGHT SIDEBAR: Summary ===== -->
+      <div class="order-sidebar">
+        <div class="summary-card">
+          <div class="summary-title">📋 订单摘要</div>
+
+          <div class="summary-row">
+            <span>商品数量</span>
+            <span>{{ totalCount }} 件</span>
+          </div>
+          <div class="summary-row">
+            <span>商品金额</span>
+            <span class="price" style="font-size:16px;">{{ util.formatPrice(totalAmount) }}</span>
+          </div>
+          <div class="summary-row">
+            <span>运费</span>
+            <span style="color:var(--accent);font-weight:600;">免运费</span>
+          </div>
+
+          <div class="summary-row summary-row--total">
+            <span class="summary-label">应付总额</span>
+            <span>¥{{ util.formatPrice(totalAmount) }}</span>
+          </div>
+
+          <button
+            class="btn-submit"
+            :disabled="submitting || !canSubmit"
+            @click="submitOrder"
+          >
+            <span v-if="submitting">
+              <span class="spinner" style="width:16px;height:16px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:8px;border-top-color:#fff;border-color:rgba(255,255,255,.3);border-top-color:#fff;"></span>
+              提交中…
+            </span>
+            <span v-else>📦 提交订单</span>
+          </button>
+
+          <p v-if="!selectedAddressId" style="text-align:center;margin-top:10px;font-size:12px;color:var(--danger);">
+            ⚠️ 请选择收货地址
+          </p>
+
+          <div class="safety-note">
+            🔒 安全支付 · 数据加密传输
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /order-layout -->
+  </div><!-- /order-page -->
+
+  <footer class="footer">
+    <p>&copy; 2026 数字商城 Digital Mall. All rights reserved.</p>
+  </footer>
+</div>
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="js/common.js"></script>
+<script src="js/top.js"></script>
+<script>
+var FALLBACK_IMG = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80"><rect fill="%23F0E8E0" width="80" height="80"/><text x="40" y="44" text-anchor="middle" font-size="28" fill="%239CA3AF">📦</text></svg>');
+
+const { createApp } = Vue
+var app = createApp({
+  data: function () {
+    return {
+      // --- URL params ---
+      ids: [],
+
+      // --- Page state ---
+      pageLoading: true,
+      pageError: '',
+
+      // --- Address ---
+      addresses: [],
+      selectedAddressId: null,
+      showAddressForm: false,
+      newAddress: { contact: '', mobile: '', province: '', city: '', detail: '' },
+      addressFormError: '',
+      addressSaving: false,
+
+      // --- Order items ---
+      orderItems: [],
+
+      // --- Payment ---
+      paymentType: 3,
+
+      // --- Submit ---
+      submitting: false,
+
+      // --- util exposed for template ---
+      util: util
+    };
+  },
+
+  computed: {
+    totalAmount: function () {
+      var sum = 0;
+      for (var i = 0; i < this.orderItems.length; i++) {
+        sum += this.orderItems[i].price * this.orderItems[i].num;
+      }
+      return sum;
+    },
+    totalCount: function () {
+      var count = 0;
+      for (var i = 0; i < this.orderItems.length; i++) {
+        count += this.orderItems[i].num;
+      }
+      return count;
+    },
+    canSubmit: function () {
+      return !!this.selectedAddressId && this.orderItems.length > 0;
+    }
+  },
+
+  methods: {
+    // ---- Image fallback ----
+    imgFallback: function (e) {
+      if (e.target.src !== FALLBACK_IMG) {
+        e.target.src = FALLBACK_IMG;
+      }
+    },
+
+    // ---- Address form ----
+    openAddressForm: function () {
+      this.newAddress = { contact: '', mobile: '', province: '', city: '', detail: '' };
+      this.addressFormError = '';
+      this.showAddressForm = true;
+    },
+
+    cancelAddressForm: function () {
+      this.showAddressForm = false;
+      this.addressFormError = '';
+    },
+
+    saveAddress: function () {
+      var addr = this.newAddress;
+      if (!addr.contact.trim()) { this.addressFormError = '请输入收货人姓名'; return; }
+      if (!addr.mobile.trim()) { this.addressFormError = '请输入手机号码'; return; }
+      if (!/^1[3-9]\d{9}$/.test(addr.mobile.trim())) { this.addressFormError = '手机号码格式不正确'; return; }
+      if (!addr.province.trim()) { this.addressFormError = '请输入省份'; return; }
+      if (!addr.city.trim()) { this.addressFormError = '请输入城市'; return; }
+      if (!addr.detail.trim()) { this.addressFormError = '请输入详细地址'; return; }
+
+      this.addressFormError = '';
+      this.addressSaving = true;
+
+      var self = this;
+      axios.post('/addresses', {
+        contact: addr.contact.trim(),
+        mobile: addr.mobile.trim(),
+        province: addr.province.trim(),
+        city: addr.city.trim(),
+        detail: addr.detail.trim()
+      })
+      .then(function (res) {
+        self.addressSaving = false;
+        self.showAddressForm = false;
+        // Refresh address list
+        self.fetchAddresses().then(function () {
+          // Select the newly added address (last one or by highest id)
+          if (self.addresses.length > 0) {
+            self.selectedAddressId = self.addresses[self.addresses.length - 1].id;
+          }
+        });
+      })
+      .catch(function (err) {
+        self.addressSaving = false;
+        var msg = '保存地址失败';
+        if (err.response && err.response.data && err.response.data.message) {
+          msg = err.response.data.message;
+        } else if (err.message) {
+          msg = err.message;
+        }
+        self.addressFormError = msg;
+      });
+    },
+
+    // ---- Fetch addresses ----
+    fetchAddresses: function () {
+      var self = this;
+      return axios.get('/addresses')
+        .then(function (res) {
+          var data = Array.isArray(res) ? res : (res.data || []);
+          self.addresses = data;
+          // Auto-select default address
+          if (!self.selectedAddressId && data.length > 0) {
+            var def = null;
+            for (var i = 0; i < data.length; i++) {
+              if (data[i].isDefault) { def = data[i]; break; }
+            }
+            self.selectedAddressId = def ? def.id : data[0].id;
+          }
+        })
+        .catch(function () {
+          self.addresses = [];
+        });
+    },
+
+    fetchCartItems: function () {
+      var self = this;
+      return axios.get('/carts')
+        .then(function (res) {
+          var allItems = Array.isArray(res) ? res : (res.data || []);
+          console.log('[order-confirm] ids from URL:', self.ids);
+          console.log('[order-confirm] cart items from API:', allItems);
+          if (self.ids.length > 0) {
+            var idSet = {};
+            for (var i = 0; i < self.ids.length; i++) { idSet[self.ids[i]] = true; }
+            console.log('[order-confirm] idSet keys:', Object.keys(idSet));
+            self.orderItems = allItems.filter(function (item) { return idSet[item.id]; });
+          } else {
+            self.orderItems = allItems.filter(function (item) { return item.selected; });
+            if (self.orderItems.length === 0) {
+              self.orderItems = allItems;
+            }
+          }
+          console.log('[order-confirm] filtered orderItems:', self.orderItems);
+          if (self.orderItems.length === 0) {
+            self.pageError = '没有待结算的商品';
+          }
+        })
+        .catch(function (err) {
+          console.error('[order-confirm] fetchCartItems error:', err);
+          self.pageError = '加载购物车失败，请稍后重试';
+        });
+    },
+
+    // ---- Submit order ----
+    submitOrder: function () {
+      if (!this.canSubmit || this.submitting) return;
+
+      this.submitting = true;
+      var self = this;
+
+      var details = [];
+      for (var i = 0; i < this.orderItems.length; i++) {
+        details.push({
+          itemId: this.orderItems[i].itemId,
+          num: this.orderItems[i].num
+        });
+      }
+
+      axios.post('/orders', {
+        addressId: this.selectedAddressId,
+        paymentType: this.paymentType,
+        details: details
+      })
+      .then(function (res) {
+        self.submitting = false;
+        var data = res.code !== undefined ? (res.code === 0 ? res.data : res) : res;
+        var orderId = data.id || data.orderId || data;
+        if (typeof orderId === 'object') { orderId = orderId.id || orderId.orderId; }
+        location.href = '/pay.html?orderId=' + encodeURIComponent(orderId);
+      })
+      .catch(function (err) {
+        self.submitting = false;
+        var msg = '提交订单失败，请稍后重试';
+        if (err.response) {
+          var respData = err.response.data;
+          if (respData && respData.message) {
+            msg = respData.message;
+          } else if (err.response.status === 400) {
+            msg = '请求参数有误，请检查订单信息';
+          } else if (err.response.status === 401) {
+            msg = '登录已过期，请重新登录';
+            setTimeout(function () { location.href = '/login.html'; }, 1500);
+          }
+        } else if (err.message) {
+          msg = '网络异常：' + err.message;
+        }
+        alert(msg);
+      });
+    }
+  },
+
+  mounted: function () {
+    // 从 URL 解析 cart id（后端 Long→String 后 ID 已是字符串，不用 parseInt）
+    var idsStr = util.getUrlParam('ids');
+    if (idsStr) {
+      this.ids = idsStr.split(',').filter(function (p) { return p && p.trim(); });
+    }
+
+    var self = this;
+
+    // Fetch addresses and cart items in parallel
+    Promise.all([self.fetchAddresses(), self.fetchCartItems()])
+      .then(function () {
+        self.pageLoading = false;
+      })
+      .catch(function () {
+        self.pageLoading = false;
+        if (!self.pageError) {
+          self.pageError = '加载失败，请刷新页面重试';
+        }
+      });
+  }
+});
+
+app.component('top-nav', TopNav);
+app.mount('#app');
+</script>
+</body>
+</html>

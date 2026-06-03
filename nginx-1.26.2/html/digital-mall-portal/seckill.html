@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>数字商城 - 限时秒杀</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/digital-mall.css">
+  <style>
+    /* ── Seckill Page Specific Styles ── */
+    .seckill-hero {
+      background: linear-gradient(135deg, #FF6B35 0%, #FF8C5A 40%, #FFB088 100%);
+      padding: 48px 0 40px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .seckill-hero::before {
+      content: '';
+      position: absolute;
+      top: -60px;
+      right: -40px;
+      width: 200px;
+      height: 200px;
+      background: rgba(255,255,255,.07);
+      border-radius: 50%;
+    }
+    .seckill-hero::after {
+      content: '';
+      position: absolute;
+      bottom: -30px;
+      left: -30px;
+      width: 140px;
+      height: 140px;
+      background: rgba(255,255,255,.05);
+      border-radius: 50%;
+    }
+    .seckill-hero-icon {
+      font-size: 52px;
+      animation: seckillBadgePop .6s cubic-bezier(.68,-.55,.265,1.55);
+      display: inline-block;
+    }
+    .seckill-hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 40px;
+      font-weight: 800;
+      color: #fff;
+      margin: 12px 0 8px;
+      letter-spacing: 2px;
+    }
+    .seckill-hero-subtitle {
+      font-family: 'Nunito Sans', sans-serif;
+      font-size: 15px;
+      color: rgba(255,255,255,.85);
+      margin-bottom: 28px;
+    }
+
+    /* ── Countdown Timer ── */
+    .countdown-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+      z-index: 1;
+    }
+    .countdown-block {
+      background: rgba(0,0,0,.22);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border-radius: 12px;
+      padding: 12px 16px;
+      min-width: 64px;
+      text-align: center;
+      border: 1px solid rgba(255,255,255,.18);
+    }
+    .countdown-block .digits {
+      font-family: 'Nunito Sans', sans-serif;
+      font-size: 38px;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1;
+      letter-spacing: 2px;
+    }
+    .countdown-block .label {
+      font-size: 11px;
+      color: rgba(255,255,255,.7);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 4px;
+    }
+    .countdown-colon {
+      font-size: 34px;
+      font-weight: 800;
+      color: rgba(255,255,255,.75);
+      padding-bottom: 16px;
+    }
+    .countdown-ended {
+      font-family: 'Nunito Sans', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      background: rgba(0,0,0,.25);
+      padding: 14px 32px;
+      border-radius: 12px;
+      backdrop-filter: blur(6px);
+    }
+
+    /* ── Main Content ── */
+    .seckill-main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 36px 24px 60px;
+    }
+    .seckill-section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: #2D2D2D;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .seckill-section-title .dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: #FF6B35;
+      border-radius: 50%;
+      animation: pulseDot 1.4s infinite;
+    }
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: .4; transform: scale(1.6); }
+    }
+
+    .seckill-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+    @media (max-width: 768px) {
+      .seckill-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── Seckill Card ── */
+    .seckill-card {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 2px 12px rgba(255,107,53,.06);
+      padding: 24px;
+      display: flex;
+      gap: 20px;
+      align-items: stretch;
+      transition: transform .25s ease, box-shadow .25s ease;
+      animation: fadeInUp .5s ease both;
+      position: relative;
+      overflow: hidden;
+    }
+    .seckill-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 28px rgba(255,107,53,.12);
+    }
+    .seckill-card:nth-child(1) { animation-delay: .1s; }
+    .seckill-card:nth-child(2) { animation-delay: .15s; }
+    .seckill-card:nth-child(3) { animation-delay: .2s; }
+    .seckill-card:nth-child(4) { animation-delay: .25s; }
+    .seckill-card:nth-child(5) { animation-delay: .3s; }
+    .seckill-card:nth-child(6) { animation-delay: .35s; }
+
+    .seckill-card-badge {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: linear-gradient(135deg, #FF6B35, #FF4545);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      letter-spacing: .5px;
+      animation: badgePop .5s cubic-bezier(.68,-.55,.265,1.55) both;
+      animation-delay: inherit;
+    }
+    @keyframes badgePop {
+      0% { transform: scale(0); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .seckill-card-img {
+      width: 180px;
+      min-width: 180px;
+      height: 180px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #FFF5EE 0%, #FFF0E5 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 72px;
+      flex-shrink: 0;
+    }
+    @media (max-width: 600px) {
+      .seckill-card { flex-direction: column; }
+      .seckill-card-img { width: 100%; min-width: unset; height: 160px; }
+    }
+
+    .seckill-card-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-width: 0;
+    }
+    .seckill-card-name {
+      font-family: 'Nunito Sans', sans-serif;
+      font-size: 17px;
+      font-weight: 700;
+      color: #2D2D2D;
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+    .seckill-card-desc {
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 12px;
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .seckill-price-row {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    .seckill-price-current {
+      font-family: 'Nunito Sans', sans-serif;
+      font-size: 32px;
+      font-weight: 800;
+      color: #FF6B35;
+      line-height: 1;
+    }
+    .seckill-price-current .yen {
+      font-size: 20px;
+      font-weight: 700;
+    }
+    .seckill-price-original {
+      font-size: 15px;
+      color: #B0B0B0;
+      text-decoration: line-through;
+      font-weight: 500;
+    }
+    .seckill-price-discount {
+      background: #FFF0E5;
+      color: #FF6B35;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+
+    /* ── Progress Bar ── */
+    .seckill-progress-wrap {
+      margin-bottom: 14px;
+    }
+    .seckill-progress-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #999;
+      margin-bottom: 4px;
+    }
+    .seckill-progress-info .stock-left {
+      color: #FF6B35;
+      font-weight: 700;
+    }
+    .seckill-progress-bar {
+      height: 8px;
+      border-radius: 10px;
+      background: #F5F0EB;
+      overflow: hidden;
+    }
+    .seckill-progress-fill {
+      height: 100%;
+      border-radius: 10px;
+      background: linear-gradient(90deg, #FF6B35 0%, #FF8C5A 50%, #26C6A0 100%);
+      transition: width .6s ease;
+    }
+
+    .seckill-card-btn {
+      width: 100%;
+      padding: 12px 0;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Nunito Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      cursor: pointer;
+      background: linear-gradient(135deg, #FF6B35, #FF8C5A);
+      transition: transform .2s ease, box-shadow .2s ease, opacity .2s ease;
+      letter-spacing: 1px;
+    }
+    .seckill-card-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255,107,53,.35);
+    }
+    .seckill-card-btn:active {
+      transform: translateY(0);
+    }
+    .seckill-card-btn:disabled {
+      background: #DDD;
+      color: #AAA;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    /* ── Result Modal ── */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      animation: fadeIn .25s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .modal-dialog {
+      background: #fff;
+      border-radius: 18px;
+      padding: 40px 36px 32px;
+      text-align: center;
+      max-width: 420px;
+      width: 90%;
+      box-shadow: 0 24px 60px rgba(0,0,0,.15);
+      animation: successBounce .5s cubic-bezier(.68,-.55,.265,1.55);
+    }
+    @keyframes successBounce {
+      0% { transform: scale(.7); opacity: 0; }
+      60% { transform: scale(1.04); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .modal-icon {
+      font-size: 64px;
+      margin-bottom: 12px;
+      display: block;
+    }
+    .modal-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: #2D2D2D;
+      margin-bottom: 8px;
+    }
+    .modal-msg {
+      font-size: 15px;
+      color: #666;
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+    .modal-msg .order-id {
+      display: inline-block;
+      background: #FFF0E5;
+      color: #FF6B35;
+      font-weight: 700;
+      padding: 4px 14px;
+      border-radius: 8px;
+      letter-spacing: .5px;
+    }
+    .modal-msg .fail-reason {
+      color: #E53935;
+      font-weight: 600;
+    }
+    .modal-btn {
+      display: inline-block;
+      padding: 12px 40px;
+      border-radius: 10px;
+      border: none;
+      font-family: 'Nunito Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      color: #fff;
+      background: linear-gradient(135deg, #FF6B35, #FF8C5A);
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .modal-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255,107,53,.35);
+    }
+    .modal-btn.secondary {
+      background: #F5F0EB;
+      color: #666;
+      margin-left: 10px;
+    }
+    .modal-btn.secondary:hover {
+      box-shadow: 0 4px 14px rgba(0,0,0,.08);
+    }
+
+    /* ── Error / Empty States ── */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #999;
+    }
+    .empty-state .empty-icon {
+      font-size: 64px;
+      display: block;
+      margin-bottom: 16px;
+    }
+    .empty-state .empty-text {
+      font-size: 16px;
+      font-weight: 600;
+      color: #888;
+    }
+
+    /* ── Seckill Rules Teaser ── */
+    .seckill-rules {
+      max-width: 1200px;
+      margin: 0 auto 48px;
+      padding: 0 24px;
+    }
+    .seckill-rules-inner {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 2px 12px rgba(255,107,53,.06);
+      padding: 24px 28px;
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+    .seckill-rules-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      color: #666;
+      font-weight: 600;
+    }
+    .seckill-rules-item .rule-emoji {
+      font-size: 24px;
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+  <top-nav page="seckill"></top-nav>
+
+  <!-- ── Hero ── -->
+  <section class="seckill-hero">
+    <div class="seckill-hero-icon">⚡</div>
+    <h1 class="seckill-hero-title">限时秒杀</h1>
+    <p class="seckill-hero-subtitle">手慢无 · 拼的就是速度</p>
+
+    <div class="countdown-row" v-if="!countdownEnded">
+      <div class="countdown-block">
+        <div class="digits">{{ countdown.hours }}</div>
+        <div class="label">时</div>
+      </div>
+      <span class="countdown-colon">:</span>
+      <div class="countdown-block">
+        <div class="digits">{{ countdown.minutes }}</div>
+        <div class="label">分</div>
+      </div>
+      <span class="countdown-colon">:</span>
+      <div class="countdown-block">
+        <div class="digits">{{ countdown.seconds }}</div>
+        <div class="label">秒</div>
+      </div>
+    </div>
+    <div class="countdown-ended" v-else>本场秒杀已结束</div>
+  </section>
+
+  <!-- ── Rules Bar ── -->
+  <div class="seckill-rules">
+    <div class="seckill-rules-inner">
+      <div class="seckill-rules-item"><span class="rule-emoji">⚡</span> 限时限量，先到先得</div>
+      <div class="seckill-rules-item"><span class="rule-emoji">💰</span> 秒杀价仅在本场有效</div>
+      <div class="seckill-rules-item"><span class="rule-emoji">📦</span> 每人每件限购 1 件</div>
+      <div class="seckill-rules-item"><span class="rule-emoji">🚀</span> 下单后 15 分钟内付款</div>
+    </div>
+  </div>
+
+  <!-- ── Product Grid ── -->
+  <main class="seckill-main">
+    <div class="seckill-section-title">
+      <span class="dot"></span> 秒杀商品
+    </div>
+
+    <!-- Loading -->
+    <div class="empty-state" v-if="loading">
+      <span class="empty-icon">⏳</span>
+      <span class="empty-text">正在加载秒杀商品...</span>
+    </div>
+
+    <!-- Error -->
+    <div class="empty-state" v-else-if="loadError">
+      <span class="empty-icon">😥</span>
+      <span class="empty-text">{{ loadError }}</span>
+    </div>
+
+    <!-- Empty -->
+    <div class="empty-state" v-else-if="items.length === 0 && !countdownEnded">
+      <span class="empty-icon">📭</span>
+      <span class="empty-text">暂无秒杀商品，请留意下场活动</span>
+    </div>
+
+    <!-- Post-end empty -->
+    <div class="empty-state" v-else-if="items.length === 0 && countdownEnded">
+      <span class="empty-icon">🏁</span>
+      <span class="empty-text">本场秒杀已结束，敬请期待下一场</span>
+    </div>
+
+    <!-- Grid -->
+    <div class="seckill-grid" v-else>
+      <div class="seckill-card" v-for="item in items" :key="item.id">
+        <div class="seckill-card-badge" v-if="item.stock > 0">🔥 热卖</div>
+        <div class="seckill-card-badge" v-else style="background: linear-gradient(135deg, #999, #666);">已抢光</div>
+
+        <div class="seckill-card-img">{{ item.emoji || '📦' }}</div>
+
+        <div class="seckill-card-body">
+          <div>
+            <div class="seckill-card-name">{{ item.name }}</div>
+            <div class="seckill-card-desc">{{ item.desc }}</div>
+
+            <div class="seckill-price-row">
+              <span class="seckill-price-current">
+                <span class="yen">¥</span>{{ formatSeckillPrice(item.seckillPrice) }}
+              </span>
+              <span class="seckill-price-original">¥{{ formatSeckillPrice(item.originalPrice) }}</span>
+              <span class="seckill-price-discount">{{ calcDiscount(item) }}折</span>
+            </div>
+          </div>
+
+          <div>
+            <div class="seckill-progress-wrap">
+              <div class="seckill-progress-info">
+                <span>已抢 {{ item.soldPercent }}%</span>
+                <span class="stock-left" v-if="item.stock > 0">仅剩 {{ item.stock }} 件</span>
+                <span class="stock-left" v-else style="color:#999;">已售罄</span>
+              </div>
+              <div class="seckill-progress-bar">
+                <div class="seckill-progress-fill" :style="{ width: item.soldPercent + '%' }"></div>
+              </div>
+            </div>
+
+            <button
+              class="seckill-card-btn"
+              :disabled="item.stock <= 0 || countdownEnded || item.seckilling"
+              @click="doSeckill(item)"
+            >
+              <span v-if="item.seckilling">⏳ 抢购中...</span>
+              <span v-else-if="item.stock <= 0">已售罄</span>
+              <span v-else-if="countdownEnded">已结束</span>
+              <span v-else>⚡ 立即秒杀</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ── Footer ── -->
+  <footer class="footer">
+    <p>&copy; 2026 数字商城 Digital Mall. All rights reserved.</p>
+  </footer>
+
+  <!-- ── Result Modal ── -->
+  <div class="modal-overlay" v-if="modal.show" @click.self="closeModal">
+    <div class="modal-dialog">
+      <span class="modal-icon">{{ modal.success ? '🎉' : '😔' }}</span>
+      <div class="modal-title">{{ modal.success ? '秒杀成功！' : '秒杀失败' }}</div>
+      <div class="modal-msg">
+        <template v-if="modal.success">
+          恭喜！订单已生成<br>
+          订单编号：<span class="order-id">{{ modal.orderId }}</span><br>
+          请尽快完成支付哦～
+        </template>
+        <template v-else>
+          <span class="fail-reason">{{ modal.reason }}</span>
+        </template>
+      </div>
+      <button class="modal-btn" @click="closeModal">{{ modal.success ? '知道了' : '再试试' }}</button>
+      <button class="modal-btn secondary" v-if="modal.success" @click="goToOrders">查看订单</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="js/common.js"></script>
+<script src="js/top.js"></script>
+<script>
+const { createApp } = Vue
+
+/* ── Hardcoded test data (fallback when API unavailable) ── */
+const MOCK_SECKILL_ITEMS = [
+  {
+    id: 1,
+    name: 'iPhone 16 Pro Max 256GB',
+    desc: 'Apple 旗舰手机，A18 Pro 芯片，4800 万像素主摄，钛金属机身',
+    emoji: '📱',
+    originalPrice: 999900,
+    seckillPrice: 799900,
+    stock: 23,
+    totalStock: 200,
+    soldPercent: 89
+  },
+  {
+    id: 2,
+    name: 'AirPods Pro 第三代',
+    desc: '主动降噪，自适应透明模式，MagSafe 充电盒，IPX4 抗汗抗水',
+    emoji: '🎧',
+    originalPrice: 199900,
+    seckillPrice: 149900,
+    stock: 56,
+    totalStock: 300,
+    soldPercent: 81
+  },
+  {
+    id: 3,
+    name: 'MacBook Air M4 13英寸',
+    desc: 'M4 芯片，16GB 统一内存，512GB SSD，18 小时续航，Liquid Retina 显示屏',
+    emoji: '💻',
+    originalPrice: 899900,
+    seckillPrice: 699900,
+    stock: 8,
+    totalStock: 100,
+    soldPercent: 92
+  },
+  {
+    id: 4,
+    name: 'Sony WH-1000XM6 头戴耳机',
+    desc: '行业领先降噪，30 小时续航，快充 3 分钟播放 3 小时，轻量舒适',
+    emoji: '🎵',
+    originalPrice: 249900,
+    seckillPrice: 179900,
+    stock: 41,
+    totalStock: 150,
+    soldPercent: 73
+  },
+  {
+    id: 5,
+    name: '大疆 DJI Mini 4 Pro 无人机',
+    desc: '249g 轻量机身，4K/100fps 视频，全向避障，34 分钟续航',
+    emoji: '🚁',
+    originalPrice: 478800,
+    seckillPrice: 389900,
+    stock: 15,
+    totalStock: 80,
+    soldPercent: 81
+  },
+  {
+    id: 6,
+    name: 'Nintendo Switch OLED 马力欧红蓝',
+    desc: '7 英寸 OLED 屏幕，64GB 存储，宽幅支架，有线网络接口',
+    emoji: '🎮',
+    originalPrice: 259900,
+    seckillPrice: 189900,
+    stock: 0,
+    totalStock: 120,
+    soldPercent: 100
+  }
+]
+
+createApp({
+  data() {
+    return {
+      items: [],
+      loading: true,
+      loadError: '',
+      countdownEnded: false,
+      countdown: { hours: '00', minutes: '00', seconds: '00' },
+      countdownTimer: null,
+      /* target: next even hour from now, e.g. 14:00, 16:00, 18:00 */
+      targetTime: null,
+      modal: {
+        show: false,
+        success: false,
+        orderId: '',
+        reason: ''
+      }
+    }
+  },
+
+  computed: {},
+
+  methods: {
+    /* ── Price formatting (cents → yuan) ── */
+    formatSeckillPrice(cents) {
+      if (typeof util !== 'undefined' && util.formatPrice) {
+        return util.formatPrice(cents)
+      }
+      const yuan = (cents / 100).toFixed(2)
+      return yuan.replace(/\.00$/, '')
+    },
+
+    /* ── Discount calculation ── */
+    calcDiscount(item) {
+      const pct = Math.round((item.seckillPrice / item.originalPrice) * 100) / 10
+      return pct.toFixed(1)
+    },
+
+    /* ── Compute next round target ── */
+    computeTargetTime() {
+      const now = new Date()
+      const currentHour = now.getHours()
+      /* Next even hour: if current hour is odd, next is current+1 (even);
+         if even and we are past :00, next is current+2 */
+      let nextEven = currentHour % 2 === 0 ? currentHour : currentHour + 1
+      if (currentHour % 2 === 0) {
+        /* already past :00 of this even hour → next even */
+        nextEven = currentHour + 2
+      }
+      const target = new Date(now)
+      target.setHours(nextEven, 0, 0, 0)
+      return target.getTime()
+    },
+
+    /* ── Update countdown display ── */
+    updateCountdown() {
+      const now = Date.now()
+      const diff = this.targetTime - now
+      if (diff <= 0) {
+        this.countdownEnded = true
+        this.countdown = { hours: '00', minutes: '00', seconds: '00' }
+        this.stopCountdown()
+        return
+      }
+      const totalSec = Math.floor(diff / 1000)
+      const h = Math.floor(totalSec / 3600)
+      const m = Math.floor((totalSec % 3600) / 60)
+      const s = totalSec % 60
+      this.countdown = {
+        hours: String(h).padStart(2, '0'),
+        minutes: String(m).padStart(2, '0'),
+        seconds: String(s).padStart(2, '0')
+      }
+    },
+
+    startCountdown() {
+      this.stopCountdown()
+      this.targetTime = this.computeTargetTime()
+      this.countdownEnded = false
+      this.updateCountdown()
+      this.countdownTimer = setInterval(() => {
+        this.updateCountdown()
+      }, 1000)
+    },
+
+    stopCountdown() {
+      if (this.countdownTimer) {
+        clearInterval(this.countdownTimer)
+        this.countdownTimer = null
+      }
+    },
+
+    /* ── Load seckill items ── */
+    async loadItems() {
+      this.loading = true
+      this.loadError = ''
+      try {
+        const res = await axios.get('/seckillItem')
+        // 后端返回 List<SeckillItem>: [{ id, seckillPrice, stock, beginTime, endTime }]
+        const list = Array.isArray(res) ? res : (res && res.list ? res.list : (res && res.data ? res.data : null))
+        if (list && list.length > 0) {
+          this.items = list.map(it => ({
+            id: it.id,
+            seckillPrice: it.seckillPrice || 0,
+            stock: it.stock || 0,
+            beginTime: it.beginTime,
+            endTime: it.endTime,
+            // SeckillItem 不含商品详情，fallback 用 id 关联
+            name: '秒杀商品 #' + it.id,
+            desc: '限时抢购中',
+            emoji: this.pickEmoji(it.id),
+            originalPrice: 0,
+            totalStock: it.stock ? Math.round(it.stock * 1.5) : 100,
+            soldPercent: 0,
+            seckilling: false
+          }))
+        } else {
+          this.fallbackToMock()
+        }
+      } catch (err) {
+        console.warn('Seckill API unavailable, using test data:', err.message)
+        this.fallbackToMock()
+      } finally {
+        this.loading = false
+      }
+    },
+
+    fallbackToMock() {
+      this.items = MOCK_SECKILL_ITEMS.map(it => ({
+        ...it,
+        seckilling: false
+      }))
+    },
+
+    pickEmoji(id) {
+      const map = { 1: '📱', 2: '🎧', 3: '💻', 4: '🎵', 5: '🚁', 6: '🎮' }
+      return map[id] || '📦'
+    },
+
+    /* ── Do seckill ── */
+    async doSeckill(item) {
+      if (item.stock <= 0 || this.countdownEnded || item.seckilling) return
+
+      const needLogin = typeof util !== 'undefined' && util.isLogin && !util.isLogin()
+      if (needLogin) {
+        this.showModal(false, '', '请先登录后再参与秒杀')
+        return
+      }
+
+      item.seckilling = true
+      try {
+        const res = await axios.post('/seckillOrder/' + item.id)
+        // 后端直接返回 Long（订单ID），非 Result 包装
+        if (res) {
+          this.showModal(true, String(res), '')
+          if (item.stock > 0) {
+            item.stock--
+            item.soldPercent = item.totalStock ? Math.round(((item.totalStock - item.stock) / item.totalStock) * 100) : 0
+          }
+        } else {
+          this.showModal(false, '', '秒杀失败，请稍后再试')
+        }
+      } catch (err) {
+        let reason = '网络错误，请稍后再试'
+        if (err.response && err.response.data) {
+          const d = err.response.data
+          reason = d.message || d.msg || d.error || reason
+        }
+        this.showModal(false, '', reason)
+      } finally {
+        item.seckilling = false
+      }
+    },
+
+    /* ── Modal ── */
+    showModal(success, orderId, reason) {
+      this.modal = { show: true, success, orderId, reason }
+    },
+    closeModal() {
+      this.modal.show = false
+      /* Keep data for a tick so animation finishes cleanly */
+      setTimeout(() => {
+        this.modal = { show: false, success: false, orderId: '', reason: '' }
+      }, 300)
+    },
+    goToOrders() {
+      window.location.href = 'order.html'
+    }
+  },
+
+  mounted() {
+    this.startCountdown()
+    this.loadItems()
+  },
+
+  beforeUnmount() {
+    this.stopCountdown()
+  }
+}).component('top-nav', TopNav).mount('#app')
+</script>
+</body>
+</html>

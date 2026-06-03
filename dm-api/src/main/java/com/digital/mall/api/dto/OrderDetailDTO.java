@@ -1,0 +1,13 @@
+package com.digital.mall.api.dto;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+
+@Data
+@Schema(description = "订单明细条目")
+public class OrderDetailDTO {
+    @Schema(description = "商品id")
+    private Long itemId;
+    @Schema(description = "商品购买数量")
+    private Integer num;
+}

@@ -1,0 +1,10 @@
+D:\JavaWeb-Project\LLMproject\digital-mall\seckill-service\src\main\java\com\digital\mall\seckill\controller\SeckillOrderController.java
+D:\JavaWeb-Project\LLMproject\digital-mall\seckill-service\src\main\java\com\digital\mall\seckill\service\ISeckillItemService.java
+D:\JavaWeb-Project\LLMproject\digital-mall\seckill-service\src\main\java\com\digital\mall\seckill\service\ISeckillOrderService.java
+D:\JavaWeb-Project\LLMproject\digital-mall\seckill-service\src\main\java\com\digital\mall\seckill\domain\SeckillOrder.java
+D:\JavaWeb-Project\LLMproject\digital-mall\seckill-service\src\main\java\com\digital\mall\seckill\mapper\SeckillOrderMapper.java
+D:\JavaWeb-Project\LLMproject\digital-mall\seckill-service\src\main\java\com\digital\mall\seckill\SeckillApplication.java
+D:\JavaWeb-Project\LLMproject\digital-mall\seckill-service\src\main\java\com\digital\mall\seckill\domain\SeckillItem.java
+D:\JavaWeb-Project\LLMproject\digital-mall\seckill-service\src\main\java\com\digital\mall\seckill\service\impl\SeckillOrderServiceImpl.java
+D:\JavaWeb-Project\LLMproject\digital-mall\seckill-service\src\main\java\com\digital\mall\seckill\mapper\SeckillItemMapper.java
+D:\JavaWeb-Project\LLMproject\digital-mall\seckill-service\src\main\java\com\digital\mall\seckill\service\impl\SeckillItemServiceImpl.java

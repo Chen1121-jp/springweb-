@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>数字商城 - 注册</title>
+  <link rel="stylesheet" href="css/digital-mall.css">
+</head>
+<body>
+<div id="app">
+  <top-nav page="login"></top-nav>
+
+  <div class="login-page">
+    <div class="login-card">
+      <div class="text-center mb-24">
+        <div class="logo-icon" style="display:inline-flex;width:56px;height:56px;font-size:28px;">D</div>
+        <h2 style="margin-top:16px;">创建账号</h2>
+        <p style="color:var(--text-light);font-size:14px;margin-top:8px;">注册数字商城，开启购物之旅</p>
+      </div>
+
+      <div v-if="successMsg" class="alert alert-success" style="text-align:center;">
+        ✅ {{ successMsg }}，即将跳转登录...
+      </div>
+      <div v-if="errorMsg" class="alert alert-error" style="text-align:center;">
+        ⚠️ {{ errorMsg }}
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">👤 用户名</label>
+        <input type="text" class="input input-lg" v-model="username" placeholder="请输入用户名" autocomplete="off" @input="errorMsg=''">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">🔒 密码</label>
+        <input type="password" class="input input-lg" v-model="password" placeholder="请输入密码（至少6位）" autocomplete="new-password" @input="errorMsg=''">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">🔒 确认密码</label>
+        <input type="password" class="input input-lg" v-model="confirmPassword" placeholder="请再次输入密码" autocomplete="new-password" @input="errorMsg=''" @keyup.enter="doRegister">
+      </div>
+
+      <button type="button" class="btn btn-primary btn-lg" style="width:100%;margin-top:12px;font-size:16px;letter-spacing:4px;" @click="doRegister">
+        <span v-if="loading">注册中...</span>
+        <span v-else>注 册</span>
+      </button>
+
+      <p class="text-center" style="margin-top:24px;font-size:13px;color:var(--text-light);">
+        已有账号？<a href="/login.html" style="color:var(--primary);font-weight:600;">立即登录 ↗</a>
+      </p>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>&copy; 2026 数字商城 Digital Mall. All rights reserved.</p>
+  </footer>
+</div>
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="js/common.js"></script>
+<script src="js/top.js"></script>
+<script>
+(function () {
+  var app = Vue.createApp({
+    data: function () {
+      return {
+        username: '',
+        password: '',
+        confirmPassword: '',
+        errorMsg: '',
+        successMsg: '',
+        loading: false
+      };
+    },
+    methods: {
+      doRegister: function () {
+        var self = this;
+        self.errorMsg = '';
+        self.successMsg = '';
+
+        var u = self.username.trim();
+        if (!u)            { self.errorMsg = '请输入用户名'; return; }
+        if (u.length < 4)  { self.errorMsg = '用户名至少4个字符'; return; }
+        if (!self.password){ self.errorMsg = '请输入密码'; return; }
+        if (self.password.length < 6)         { self.errorMsg = '密码至少6位'; return; }
+        if (self.password !== self.confirmPassword) { self.errorMsg = '两次密码输入不一致'; return; }
+
+        self.loading = true;
+
+        axios.post('/users/register', { username: u, password: self.password })
+          .then(function (res) {
+            self.loading = false;
+            if (res && res.code === 200) {
+              self.successMsg = '注册成功';
+              setTimeout(function () { location.href = '/login.html'; }, 1500);
+            } else {
+              self.errorMsg = (res && res.msg) ? res.msg : '注册失败';
+            }
+          })
+          .catch(function (err) {
+            self.loading = false;
+            var d = err && err.response ? err.response.data : null;
+            self.errorMsg = (d && d.msg) ? d.msg : ((d && d.message) ? d.message : '网络异常，请稍后重试');
+          });
+      }
+    },
+    mounted: function () {
+      if (typeof util !== 'undefined' && util.isLogin()) {
+        location.href = '/';
+      }
+    }
+  });
+
+  app.component('top-nav', TopNav);
+  app.mount('#app');
+})();
+</script>
+</body>
+</html>

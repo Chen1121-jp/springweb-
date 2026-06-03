@@ -1,0 +1,32 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: pay-service
+  profiles:
+    active: local
+  datasource:
+    url: jdbc:postgresql://${dm.db.host:localhost}:5432/digital_mall?currentSchema=pay
+    driver-class-name: org.postgresql.Driver
+    username: ${dm.db.username:postgres}
+    password: ${dm.db.password:123456}
+  rabbitmq:
+    host: ${dm.mq.host:localhost}
+    port: 5672
+    virtual-host: ${dm.mq.vhost:/}
+    username: ${dm.mq.username:guest}
+    password: ${dm.mq.password:guest}
+  cloud:
+    nacos:
+      server-addr: ${dm.nacos.host:localhost}:8848
+
+mybatis-plus:
+  global-config:
+    db-config:
+      update-strategy: not_null
+      id-type: assign_id
+
+logging:
+  level:
+    com.digital.mall: debug

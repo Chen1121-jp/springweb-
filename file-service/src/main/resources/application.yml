@@ -1,0 +1,26 @@
+server:
+  port: 8089
+
+spring:
+  application:
+    name: file-service
+  profiles:
+    active: local
+  cloud:
+    nacos:
+      server-addr: ${dm.nacos.host:localhost}:8848
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 20MB
+
+dm:
+  minio:
+    endpoint: http://localhost:9000
+    access-key: minioadmin
+    secret-key: minioadmin
+    bucket: digital-mall
+
+logging:
+  level:
+    com.digital.mall: debug

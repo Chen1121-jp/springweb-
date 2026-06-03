@@ -1,0 +1,17 @@
+com\digital\mall\api\client\TradeClient.class
+com\digital\mall\api\query\ItemPageQuery.class
+com\digital\mall\api\config\DefaultFeignConfig.class
+com\digital\mall\api\dto\SeckillItemDTO.class
+com\digital\mall\api\client\SearchClient.class
+com\digital\mall\api\client\PayClient.class
+com\digital\mall\api\client\CartClient.class
+com\digital\mall\api\dto\OrderVO.class
+com\digital\mall\api\dto\OrderDetailDTO.class
+com\digital\mall\api\client\SeckillClient.class
+com\digital\mall\api\dto\CartVO.class
+com\digital\mall\api\dto\ItemDTO.class
+com\digital\mall\api\client\UserClient.class
+com\digital\mall\api\dto\PayOrderDTO.class
+com\digital\mall\api\client\ItemClient.class
+com\digital\mall\api\dto\AddressDTO.class
+com\digital\mall\api\config\DefaultFeignConfig$1.class

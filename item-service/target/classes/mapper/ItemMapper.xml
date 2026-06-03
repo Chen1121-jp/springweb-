@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.digital.mall.item.mapper.ItemMapper">
+
+    <!-- 批量扣减库存，利用 PostgreSQL 行锁保证不超卖 -->
+    <update id="updateStock" parameterType="com.digital.mall.item.domain.dto.OrderDetailDTO">
+        UPDATE item.item
+        SET stock = stock - #{num}
+        WHERE id = #{itemId}
+          AND stock >= #{num}
+    </update>
+
+</mapper>

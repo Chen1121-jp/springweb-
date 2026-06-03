@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"D:\\\\JavaWeb-Project\\\\SpringClould\\\\hmall\" -Depth 1 -Directory)",
+      "Bash(Select-Object Name)",
+      "Bash(Get-ChildItem -Path \"D:\\\\JavaWeb-Project\\\\SpringClould\\\\hmall\\\\trade-service\\\\src\" -Recurse -File)",
+      "Bash(Select-Object FullName)",
+      "Bash(Get-ChildItem -Recurse -Depth 3 -Name)",
+      "Bash(Select-Object -First 200)",
+      "PowerShell(docker exec dm-rabbitmq *)",
+      "Bash(Get-ChildItem -Path \"D:\\\\JavaWeb-Project\\\\LLMproject\\\\digital-mall\" -Depth 2 -Directory)",
+      "Bash(Get-ChildItem *)",
+      "Bash(Test-Path \"D:\\\\JavaWeb-Project\\\\LLMproject\\\\digital-mall\\\\infrastructure\\\\nginx\\\\html\\\\digital-mall-portal\\\\css\\\\digital-mall.css\")",
+      "Bash(Test-Path \"D:\\\\JavaWeb-Project\\\\LLMproject\\\\digital-mall\\\\infrastructure\\\\nginx\\\\html\\\\digital-mall-portal\\\\js\\\\common.js\")",
+      "Bash(Test-Path \"D:\\\\JavaWeb-Project\\\\LLMproject\\\\digital-mall\\\\infrastructure\\\\nginx\\\\html\\\\digital-mall-portal\\\\js\\\\top.js\")"
+    ]
+  },
+  "enabledPlugins": {}
+}

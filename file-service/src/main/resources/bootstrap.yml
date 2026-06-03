@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: file-service
+  profiles:
+    active: local
+  cloud:
+    nacos:
+      server-addr: ${dm.nacos.host:localhost}:8848
+      config:
+        file-extension: yaml
+#        shared-configs:
+#          - dataId: shared-log.yaml
+#          - dataId: shared-swagger.yaml

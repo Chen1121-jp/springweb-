@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>数字商城 - 商品搜索</title>
+  <link rel="stylesheet" href="css/digital-mall.css">
+  <style>
+    /* ========== Search Page Overrides & Extensions ========== */
+    .search-page-wrap { padding-bottom: 48px; }
+
+    /* — Search Hero — */
+    .search-hero {
+      padding: 36px 0 24px;
+      text-align: center;
+    }
+    .search-hero h2 {
+      font: 800 30px/1.2 'Playfair Display', serif;
+      margin-bottom: 8px;
+    }
+    .search-hero p {
+      font: 500 14px 'Nunito Sans', sans-serif;
+      color: var(--text-light);
+    }
+    .search-hero .search-bar {
+      margin: 20px auto 0;
+      max-width: 680px;
+      border-radius: var(--radius);
+      border: 2px solid var(--primary);
+      box-shadow: 0 4px 24px rgba(255,107,53,.14);
+      display: flex;
+      overflow: hidden;
+      background: #fff;
+    }
+    .search-hero .search-bar input {
+      flex: 1; padding: 15px 22px; border: none;
+      font: 500 15px 'Nunito Sans', sans-serif; outline: none;
+      color: var(--text);
+    }
+    .search-hero .search-bar input::placeholder { color: var(--text-light); }
+    .search-hero .search-bar button {
+      background: linear-gradient(135deg, var(--primary), #FF8D5C);
+      color: #fff; border: none;
+      padding: 15px 36px; font: 600 15px 'Nunito Sans', sans-serif;
+      cursor: pointer; transition: all .25s var(--ease);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .search-hero .search-bar button:hover {
+      background: var(--primary-dark);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.2);
+    }
+
+    /* — Filter / Sort Row — */
+    .toolbar {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+      padding: 18px 0 12px;
+      border-bottom: 1px solid var(--border-light);
+      margin-bottom: 20px;
+    }
+    .toolbar__label {
+      font: 600 13px 'Nunito Sans', sans-serif;
+      color: var(--text-secondary);
+      margin-right: 4px;
+      white-space: nowrap;
+    }
+    .toolbar .filter-tag {
+      padding: 7px 16px; border-radius: 20px;
+      background: var(--border-light); font: 500 13px 'Nunito Sans', sans-serif;
+      color: var(--text-secondary); cursor: pointer;
+      transition: all .2s var(--ease);
+      border: 1.5px solid transparent;
+      white-space: nowrap;
+      user-select: none;
+    }
+    .toolbar .filter-tag:hover {
+      background: var(--primary-dim);
+      color: var(--primary-dark);
+      border-color: var(--primary-dim);
+    }
+    .toolbar .filter-tag.selected {
+      background: var(--primary); color: #fff; border-color: var(--primary);
+      box-shadow: 0 2px 8px rgba(255,107,53,.2);
+    }
+
+    /* price group */
+    .price-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .price-tag {
+      padding: 6px 13px; border-radius: 18px;
+      background: #fff; border: 1.5px solid var(--border);
+      font: 500 12px 'Nunito Sans', sans-serif;
+      color: var(--text-secondary); cursor: pointer;
+      transition: all .2s var(--ease);
+      white-space: nowrap;
+      user-select: none;
+    }
+    .price-tag:hover {
+      border-color: var(--primary-dim);
+      color: var(--primary-dark);
+      background: var(--primary-light);
+    }
+    .price-tag.selected {
+      border-color: var(--primary); background: var(--primary);
+      color: #fff; box-shadow: 0 2px 8px rgba(255,107,53,.18);
+      font-weight: 700;
+    }
+
+    /* sort chips */
+    .sort-chips { display: flex; gap: 6px; }
+    .sort-chip {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 7px 14px; border-radius: 20px;
+      background: #fff; border: 1.5px solid var(--border);
+      font: 600 13px 'Nunito Sans', sans-serif;
+      color: var(--text-secondary); cursor: pointer;
+      transition: all .2s var(--ease);
+      user-select: none;
+    }
+    .sort-chip:hover {
+      border-color: var(--primary-dim);
+      color: var(--primary-dark);
+    }
+    .sort-chip.active {
+      border-color: var(--primary); background: var(--primary-light);
+      color: var(--primary); font-weight: 700;
+    }
+    .sort-chip .arrow { font-size: 11px; transition: transform .2s var(--ease); }
+    .sort-chip .arrow.desc { transform: rotate(180deg); }
+
+    /* result summary */
+    .result-meta {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 0 18px;
+    }
+    .result-count {
+      font: 600 14px 'Nunito Sans', sans-serif;
+      color: var(--text-secondary);
+    }
+    .result-count strong {
+      color: var(--primary);
+      font-weight: 800;
+      font-size: 16px;
+    }
+    .result-clear {
+      font: 500 13px 'Nunito Sans', sans-serif;
+      color: var(--text-light); cursor: pointer;
+      transition: color .2s var(--ease);
+    }
+    .result-clear:hover { color: var(--danger); }
+
+    /* product card enhancements */
+    .card--product .brand-tag {
+      display: inline-block; padding: 2px 8px;
+      background: var(--primary-light); color: var(--primary);
+      font: 600 10px 'Nunito Sans', sans-serif;
+      border-radius: 4px; margin-right: 4px;
+    }
+    .card--product .sales-info {
+      font: 500 11px 'Nunito Sans', sans-serif;
+      color: var(--text-light);
+    }
+    .card--product .img-wrap {
+      position: relative; overflow: hidden;
+    }
+    .card--product .img-wrap .category-badge {
+      position: absolute; top: 10px; left: 10px;
+      padding: 3px 10px; border-radius: 6px;
+      background: rgba(255,255,255,.92);
+      backdrop-filter: blur(4px);
+      font: 600 10px 'Nunito Sans', sans-serif;
+      color: var(--primary);
+      box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    }
+
+    /* pagination enhancements */
+    .pagination .ellipsis {
+      border: none !important; cursor: default;
+      color: var(--text-light);
+    }
+    .pagination .page-btn { cursor: pointer; }
+    .pagination .page-btn.disabled {
+      opacity: .4; pointer-events: none;
+    }
+
+    /* loading overlay inside grid */
+    .grid-loading {
+      grid-column: 1 / -1;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 72px 0;
+    }
+
+    /* responsive */
+    @media (max-width: 768px) {
+      .toolbar { gap: 6px; }
+      .toolbar .filter-tag { padding: 6px 12px; font-size: 12px; }
+      .sort-chip { padding: 6px 10px; font-size: 12px; }
+      .search-hero h2 { font-size: 24px; }
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+  <top-nav page="search"></top-nav>
+
+  <div class="container search-page-wrap">
+
+    <!-- ====== Search Hero ====== -->
+    <div class="search-hero">
+      <h2 class="display-font">🔍 探索心仪好物</h2>
+      <p>万千数字商品，一搜即达</p>
+      <div class="search-bar">
+        <input
+          type="text"
+          v-model="keyword"
+          placeholder="搜索商品名称、品牌、分类..."
+          @keyup.enter="handleSearch"
+        >
+        <button @click="handleSearch">🔍 搜索</button>
+      </div>
+    </div>
+
+    <!-- ====== Filter Toolbar ====== -->
+    <div class="toolbar">
+      <span class="toolbar__label">分类</span>
+      <span
+        class="filter-tag"
+        :class="{ selected: selectedCategory === '' }"
+        @click="selectCategory('')"
+      >全部</span>
+      <span
+        v-for="cat in categories"
+        :key="cat"
+        class="filter-tag"
+        :class="{ selected: selectedCategory === cat }"
+        @click="selectCategory(cat)"
+      >{{ cat }}</span>
+
+      <span class="toolbar__label" style="margin-left:12px;">品牌</span>
+      <span
+        class="filter-tag"
+        :class="{ selected: selectedBrand === '' }"
+        @click="selectBrand('')"
+      >全部</span>
+      <span
+        v-for="b in brands"
+        :key="b"
+        class="filter-tag"
+        :class="{ selected: selectedBrand === b }"
+        @click="selectBrand(b)"
+      >{{ b }}</span>
+    </div>
+
+    <!-- ====== Price Range & Sort ====== -->
+    <div class="flex-between" style="flex-wrap:wrap;gap:12px;padding:12px 0;border-bottom:1px solid var(--border-light);margin-bottom:8px;">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <span class="toolbar__label">💰 价格</span>
+        <span
+          v-for="pr in priceRanges"
+          :key="pr.label"
+          class="price-tag"
+          :class="{ selected: priceMin === pr.min && priceMax === pr.max }"
+          @click="selectPrice(pr.min, pr.max)"
+        >{{ pr.label }}</span>
+      </div>
+
+      <div class="sort-chips">
+        <span
+          class="sort-chip"
+          :class="{ active: sortBy === '' }"
+          @click="changeSort('')"
+        >默认</span>
+        <span
+          class="sort-chip"
+          :class="{ active: sortBy === 'sales' }"
+          @click="changeSort('sales')"
+        >
+          销量
+          <span v-if="sortBy === 'sales'" class="arrow" :class="{ desc: !isAsc }">▼</span>
+        </span>
+        <span
+          class="sort-chip"
+          :class="{ active: sortBy === 'price' }"
+          @click="changeSort('price')"
+        >
+          价格
+          <span v-if="sortBy === 'price'" class="arrow" :class="{ desc: !isAsc }">▼</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- ====== Result Meta ====== -->
+    <div class="result-meta">
+      <div class="result-count">
+        共 <strong>{{ total }}</strong> 件商品
+        <span v-if="keyword"> — 搜索词 "{{ keyword }}"</span>
+      </div>
+      <span class="result-clear" v-if="hasFilters" @click="clearAll">清除全部筛选</span>
+    </div>
+
+    <!-- ====== Product Grid ====== -->
+    <div class="product-grid" v-if="!loading">
+      <div
+        v-for="item in items"
+        :key="item.id"
+        class="card card--product"
+        @click="goDetail(item.id)"
+      >
+        <div class="img-wrap">
+          <img :src="item.image || 'https://placehold.co/400x300/FFF0EB/FF6B35?text=' + encodeURIComponent(item.name || '商品')" :alt="item.name">
+          <span class="category-badge" v-if="item.category">{{ item.category }}</span>
+        </div>
+        <div class="info">
+          <div class="name">{{ item.name }}</div>
+          <div class="meta-row">
+            <span v-if="item.brand" class="brand-tag">{{ item.brand }}</span>
+            <span class="sales-info" v-if="item.sales">已售 {{ util.formatCount(item.sales) }}</span>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:6px;">
+            <span class="price">{{ util.formatPrice(item.price) }}</span>
+            <span v-if="item.originPrice && item.originPrice > item.price" class="price--old">{{ util.formatPrice(item.originPrice) }}</span>
+          </div>
+          <div class="actions">
+            <button class="btn btn-outline btn-sm" @click.stop="goDetail(item.id)">查看详情</button>
+            <button class="btn btn-primary btn-sm" @click.stop="addCart(item)">🛒 加入购物车</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== Loading State ====== -->
+    <div class="product-grid" v-else>
+      <div class="grid-loading">
+        <div class="spinner"></div>
+        <p>正在搜索商品...</p>
+      </div>
+    </div>
+
+    <!-- ====== Empty State ====== -->
+    <div class="empty-state" v-if="!loading && items.length === 0">
+      <div class="icon">📦</div>
+      <h3>暂无符合条件的商品</h3>
+      <p>试试更换筛选条件或搜索其他关键词吧~</p>
+    </div>
+
+    <!-- ====== Pagination ====== -->
+    <div class="pagination" v-if="totalPages > 1 && !loading">
+      <a
+        class="page-btn"
+        :class="{ disabled: currentPage <= 1 }"
+        @click="changePage(currentPage - 1)"
+      >&laquo;</a>
+      <a
+        class="page-btn"
+        v-for="p in displayPages"
+        :key="p"
+        :class="{ current: p === currentPage }"
+        @click="changePage(p)"
+      >{{ p }}</a>
+      <span class="ellipsis" v-if="showRightEllipsis">...</span>
+      <a
+        class="page-btn"
+        :class="{ disabled: currentPage >= totalPages }"
+        @click="changePage(currentPage + 1)"
+      >&raquo;</a>
+    </div>
+  </div>
+
+  <!-- ====== Footer ====== -->
+  <footer class="footer">
+    <p>&copy; 2026 数字商城 Digital Mall. All rights reserved.</p>
+  </footer>
+</div>
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="js/common.js"></script>
+<script src="js/top.js"></script>
+<script>
+const { createApp } = Vue
+
+createApp({
+  data() {
+    return {
+      // search state
+      keyword: '',
+      items: [],
+      total: 0,
+      currentPage: 1,
+      pageSize: 20,
+      totalPages: 0,
+      loading: false,
+
+      // sort state
+      sortBy: '',      // '' | 'sales' | 'price'
+      isAsc: true,
+
+      // filter state
+      selectedCategory: '',
+      selectedBrand: '',
+      priceMin: null,
+      priceMax: null,
+
+      // filter data
+      categories: [],
+      brands: [],
+
+      // price range presets
+      priceRanges: [
+        { label: '全部', min: null, max: null },
+        { label: '￥100以下', min: 0, max: 10000 },
+        { label: '￥100-299', min: 10000, max: 29900 },
+        { label: '￥300-599', min: 30000, max: 59900 },
+        { label: '￥600-899', min: 60000, max: 89900 },
+        { label: '￥900-1599', min: 90000, max: 159900 },
+        { label: '￥1600以上', min: 160000, max: null }
+      ],
+
+      // exposed refs
+      util
+    };
+  },
+
+  computed: {
+    hasFilters() {
+      return this.selectedCategory || this.selectedBrand || this.priceMin !== null || this.priceMax !== null || this.sortBy !== '';
+    },
+    displayPages() {
+      const pages = [];
+      const tp = this.totalPages;
+      const cp = this.currentPage;
+      if (tp <= 7) {
+        for (let i = 1; i <= tp; i++) pages.push(i);
+      } else {
+        pages.push(1);
+        if (cp > 3) pages.push('...');
+        const start = Math.max(2, cp - 1);
+        const end = Math.min(tp - 1, cp + 1);
+        for (let i = start; i <= end; i++) pages.push(i);
+        if (cp < tp - 2) pages.push('...');
+        pages.push(tp);
+      }
+      return pages;
+    },
+    showRightEllipsis() {
+      return this.totalPages > 7 && this.currentPage < this.totalPages - 2;
+    }
+  },
+
+  methods: {
+    // ---- fetch filters ----
+    fetchFilters() {
+      // try to fetch categories & brands from API; use fallback on failure
+      axios.get('/items/categories').then(r => {
+        if (Array.isArray(r)) this.categories = r;
+        else if (r && Array.isArray(r.data)) this.categories = r.data;
+      }).catch(() => {
+        this.categories = ['手机数码', '电脑办公', '家用电器', '服饰鞋包', '美妆护肤', '食品生鲜', '图书文娱'];
+      });
+
+      axios.get('/items/brands').then(r => {
+        if (Array.isArray(r)) this.brands = r;
+        else if (r && Array.isArray(r.data)) this.brands = r.data;
+      }).catch(() => {
+        this.brands = ['华为', '苹果', '小米', '索尼', '联想', '戴尔', '耐克', '阿迪达斯', '兰蔻'];
+      });
+    },
+
+    // ---- search ----
+    handleSearch() {
+      this.currentPage = 1;
+      this.doSearch();
+    },
+
+    doSearch() {
+      this.loading = true;
+      this.items = [];
+
+      const params = {
+        pageNo: this.currentPage,
+        pageSize: this.pageSize
+      };
+
+      // keyword
+      if (this.keyword && this.keyword.trim()) {
+        params.name = this.keyword.trim();
+      }
+
+      // sort
+      if (this.sortBy) {
+        params.sortBy = this.sortBy;
+        params.isAsc = this.isAsc;
+      }
+
+      // category — pass as query param if API supports it
+      if (this.selectedCategory) {
+        params.category = this.selectedCategory;
+      }
+
+      // brand
+      if (this.selectedBrand) {
+        params.brand = this.selectedBrand;
+      }
+
+      // price range (in cents)
+      if (this.priceMin !== null) {
+        params.priceMin = this.priceMin;
+      }
+      if (this.priceMax !== null) {
+        params.priceMax = this.priceMax;
+      }
+
+      axios.get('/items/page', { params })
+        .then(resp => {
+          // handle various response shapes
+          const data = resp.data || resp;
+          // PageDTO: { total, pages, list }
+          if (data.list) {
+            this.items = data.list;
+            this.total = data.total || 0;
+            this.totalPages = data.pages || Math.ceil((data.total || 0) / this.pageSize);
+          } else if (data.records) {
+            this.items = data.records;
+            this.total = data.total || 0;
+            this.totalPages = data.pages || Math.ceil((data.total || 0) / this.pageSize);
+          } else if (Array.isArray(data)) {
+            this.items = data;
+            this.total = data.length;
+            this.totalPages = Math.ceil(data.length / this.pageSize) || 1;
+          } else if (Array.isArray(resp)) {
+            this.items = resp;
+            this.total = resp.length;
+            this.totalPages = Math.ceil(resp.length / this.pageSize) || 1;
+          } else {
+            this.items = [];
+            this.total = 0;
+            this.totalPages = 0;
+          }
+          this.loading = false;
+        })
+        .catch(err => {
+          console.error('Search failed:', err);
+          this.items = [];
+          this.total = 0;
+          this.totalPages = 0;
+          this.loading = false;
+        });
+    },
+
+    // ---- filters ----
+    selectCategory(cat) {
+      this.selectedCategory = cat;
+      this.currentPage = 1;
+      this.doSearch();
+    },
+
+    selectBrand(brand) {
+      this.selectedBrand = brand;
+      this.currentPage = 1;
+      this.doSearch();
+    },
+
+    selectPrice(min, max) {
+      if (this.priceMin === min && this.priceMax === max) {
+        // deselect
+        this.priceMin = null;
+        this.priceMax = null;
+      } else {
+        this.priceMin = min;
+        this.priceMax = max;
+      }
+      this.currentPage = 1;
+      this.doSearch();
+    },
+
+    clearAll() {
+      this.keyword = '';
+      this.selectedCategory = '';
+      this.selectedBrand = '';
+      this.priceMin = null;
+      this.priceMax = null;
+      this.sortBy = '';
+      this.isAsc = true;
+      this.currentPage = 1;
+      // update URL without the key param
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState({}, '', window.location.pathname);
+      }
+      this.doSearch();
+    },
+
+    // ---- sort ----
+    changeSort(field) {
+      if (this.sortBy === field) {
+        // toggle direction
+        this.isAsc = !this.isAsc;
+      } else {
+        this.sortBy = field;
+        this.isAsc = true;
+      }
+      this.currentPage = 1;
+      this.doSearch();
+    },
+
+    // ---- pagination ----
+    changePage(page) {
+      if (page < 1 || page > this.totalPages || page === this.currentPage) return;
+      this.currentPage = page;
+      this.doSearch();
+      // scroll to top of results
+      window.scrollTo({ top: 280, behavior: 'smooth' });
+    },
+
+    // ---- navigation ----
+    goDetail(id) {
+      location.href = '/detail.html?id=' + id;
+    },
+
+    addCart(item) {
+      if (!util.isLogin()) {
+        location.href = '/login.html';
+        return;
+      }
+      axios.post('/carts', {
+        itemId: item.id,
+        name: item.name,
+        spec: item.spec || '',
+        price: item.price,
+        image: item.image || ''
+      })
+        .then(() => {
+          window.dispatchEvent(new CustomEvent('cart-updated'));
+        })
+        .catch(err => {
+          console.error('Add to cart failed:', err);
+        });
+    }
+  },
+
+  mounted() {
+    // pre-fill keyword from URL param "key"
+    const key = util.getUrlParam('key');
+    if (key) {
+      this.keyword = decodeURIComponent(key);
+    }
+
+    // load filter options
+    this.fetchFilters();
+
+    // initial search
+    this.doSearch();
+  }
+}).component('top-nav', TopNav).mount('#app')
+</script>
+</body>
+</html>
