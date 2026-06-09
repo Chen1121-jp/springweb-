@@ -17,8 +17,8 @@ public class SeckillOrderController {
 
     @Operation(summary = "秒杀商品接口")
     @PostMapping("/{id}")
-    public Long seckillVoucher(@PathVariable("id") Long itemId) {
-        return seckillOrderService.seckillOrder(itemId);
+    public Result<Long> seckillVoucher(@PathVariable("id") Long itemId) {
+        return Result.ok(seckillOrderService.seckillOrder(itemId));
     }
 
     @Operation(summary = "健康检查")

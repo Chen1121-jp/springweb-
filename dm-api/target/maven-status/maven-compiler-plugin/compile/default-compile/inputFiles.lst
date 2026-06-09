@@ -8,6 +8,7 @@ D:\JavaWeb-Project\LLMproject\digital-mall\dm-api\src\main\java\com\digital\mall
 D:\JavaWeb-Project\LLMproject\digital-mall\dm-api\src\main\java\com\digital\mall\api\dto\CartVO.java
 D:\JavaWeb-Project\LLMproject\digital-mall\dm-api\src\main\java\com\digital\mall\api\client\SeckillClient.java
 D:\JavaWeb-Project\LLMproject\digital-mall\dm-api\src\main\java\com\digital\mall\api\dto\OrderDetailDTO.java
+D:\JavaWeb-Project\LLMproject\digital-mall\dm-api\src\main\java\com\digital\mall\api\client\fallback\ItemClientFallback.java
 D:\JavaWeb-Project\LLMproject\digital-mall\dm-api\src\main\java\com\digital\mall\api\client\CartClient.java
 D:\JavaWeb-Project\LLMproject\digital-mall\dm-api\src\main\java\com\digital\mall\api\client\TradeClient.java
 D:\JavaWeb-Project\LLMproject\digital-mall\dm-api\src\main\java\com\digital\mall\api\config\DefaultFeignConfig.java

@@ -26,16 +26,17 @@ public class UserController {
     }
     @Operation(summary = "用户登录接口")
     @PostMapping("/login")
-    public UserLoginVO login(@RequestBody @Validated LoginFormDTO loginFormDTO) {
-        return userService.login(loginFormDTO);
+    public Result<UserLoginVO> login(@RequestBody @Validated LoginFormDTO loginFormDTO) {
+        return Result.ok(userService.login(loginFormDTO));
     }
 
     @Operation(summary = "扣减余额")
     @PutMapping("/money/deduct")
-    public void deductMoney(
+    public Result<Void> deductMoney(
             @Parameter(description = "支付密码") @RequestParam("pw") String pw,
             @Parameter(description = "支付金额") @RequestParam("amount") Integer amount) {
         userService.deductMoney(pw, amount);
+        return Result.ok();
     }
 
     @Operation(summary = "健康检查")

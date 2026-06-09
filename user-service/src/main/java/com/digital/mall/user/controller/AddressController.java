@@ -1,5 +1,6 @@
 package com.digital.mall.user.controller;
 
+import com.digital.mall.common.domain.Result;
 import com.digital.mall.common.exception.BadRequestException;
 import com.digital.mall.common.utils.BeanUtils;
 import com.digital.mall.common.utils.CollUtils;
@@ -25,34 +26,34 @@ public class AddressController {
 
     @Operation(summary = "根据id查询地址")
     @GetMapping("/{addressId}")
-    public AddressDTO findAddressById(@Parameter(description = "地址id") @PathVariable("addressId") Long id) {
+    public Result<AddressDTO> findAddressById(@Parameter(description = "地址id") @PathVariable("addressId") Long id) {
         Address address = addressService.getById(id);
         // 判断当前用户
         Long userId = UserContext.getUser();
         if (!address.getUserId().equals(userId)) {
             throw new BadRequestException("地址不属于当前登录用户");
         }
-        return BeanUtils.copyBean(address, AddressDTO.class);
+        return Result.ok(BeanUtils.copyBean(address, AddressDTO.class));
     }
 
     @Operation(summary = "查询当前用户地址列表")
     @GetMapping
-    public List<AddressDTO> findMyAddresses() {
+    public Result<List<AddressDTO>> findMyAddresses() {
         List<Address> list = addressService.query()
                 .eq("user_id", UserContext.getUser())
                 .list();
         if (CollUtils.isEmpty(list)) {
-            return CollUtils.emptyList();
+            return Result.ok(CollUtils.emptyList());
         }
-        return BeanUtils.copyList(list, AddressDTO.class);
+        return Result.ok(BeanUtils.copyList(list, AddressDTO.class));
     }
 
     @Operation(summary = "新增地址")
     @PostMapping
-    public Long addAddress(@RequestBody AddressDTO addressDTO) {
+    public Result<Long> addAddress(@RequestBody AddressDTO addressDTO) {
         Address address = BeanUtils.copyBean(addressDTO, Address.class);
         address.setUserId(UserContext.getUser());
         addressService.save(address);
-        return address.getId();
+        return Result.ok(address.getId());
     }
 }

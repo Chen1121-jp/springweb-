@@ -1,6 +1,6 @@
 com\digital\mall\pay\service\impl\PayOrderServiceImpl.class
-com\digital\mall\pay\mapper\PayOrderMapper.class
 com\digital\mall\pay\service\IPayOrderService.class
-com\digital\mall\pay\domain\po\PayOrder.class
 com\digital\mall\pay\PayApplication.class
 com\digital\mall\pay\controller\PayController.class
+com\digital\mall\pay\mapper\PayOrderMapper.class
+com\digital\mall\pay\domain\po\PayOrder.class

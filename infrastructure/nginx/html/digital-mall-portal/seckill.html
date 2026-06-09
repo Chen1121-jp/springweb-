@@ -531,7 +531,10 @@
         <div class="seckill-card-badge" v-if="item.stock > 0">🔥 热卖</div>
         <div class="seckill-card-badge" v-else style="background: linear-gradient(135deg, #999, #666);">已抢光</div>
 
-        <div class="seckill-card-img">{{ item.emoji || '📦' }}</div>
+        <div class="seckill-card-img">
+              <img v-if="item.image" :src="item.image" :alt="item.name" style="width:100%;height:100%;object-fit:cover;border-radius:12px;">
+              <span v-else>{{ item.emoji || '📦' }}</span>
+            </div>
 
         <div class="seckill-card-body">
           <div>
@@ -693,6 +696,7 @@ createApp({
         show: false,
         success: false,
         orderId: '',
+        amount: 0,
         reason: ''
       }
     }
@@ -781,15 +785,15 @@ createApp({
         if (list && list.length > 0) {
           this.items = list.map(it => ({
             id: it.id,
+            name: it.name || '秒杀商品 #' + it.id,
+            image: it.image || '',
+            originalPrice: it.originalPrice || 0,
             seckillPrice: it.seckillPrice || 0,
             stock: it.stock || 0,
             beginTime: it.beginTime,
             endTime: it.endTime,
-            // SeckillItem 不含商品详情，fallback 用 id 关联
-            name: '秒杀商品 #' + it.id,
             desc: '限时抢购中',
             emoji: this.pickEmoji(it.id),
-            originalPrice: 0,
             totalStock: it.stock ? Math.round(it.stock * 1.5) : 100,
             soldPercent: 0,
             seckilling: false
@@ -823,22 +827,23 @@ createApp({
 
       const needLogin = typeof util !== 'undefined' && util.isLogin && !util.isLogin()
       if (needLogin) {
-        this.showModal(false, '', '请先登录后再参与秒杀')
+        this.showModal(false, '', 0, 0, '请先登录后再参与秒杀')
         return
       }
 
       item.seckilling = true
       try {
         const res = await axios.post('/seckillOrder/' + item.id)
-        // 后端直接返回 Long（订单ID），非 Result 包装
-        if (res) {
-          this.showModal(true, String(res), '')
+        const orderId = res.data && res.data.data ? res.data.data : res.data
+        if (orderId) {
           if (item.stock > 0) {
             item.stock--
             item.soldPercent = item.totalStock ? Math.round(((item.totalStock - item.stock) / item.totalStock) * 100) : 0
           }
+          // 秒杀成功 → 直接跳支付页
+          window.location.href = '/pay.html?orderId=' + orderId + '&amount=' + item.seckillPrice + '&type=seckill'
         } else {
-          this.showModal(false, '', '秒杀失败，请稍后再试')
+          this.showModal(false, '', 0, '秒杀失败，请稍后再试')
         }
       } catch (err) {
         let reason = '网络错误，请稍后再试'
@@ -846,25 +851,25 @@ createApp({
           const d = err.response.data
           reason = d.message || d.msg || d.error || reason
         }
-        this.showModal(false, '', reason)
+        this.showModal(false, '', 0, reason)
       } finally {
         item.seckilling = false
       }
     },
 
     /* ── Modal ── */
-    showModal(success, orderId, reason) {
-      this.modal = { show: true, success, orderId, reason }
+    showModal(success, orderId, amount, reason) {
+      this.modal = { show: true, success, orderId, amount: amount || 0, reason }
     },
     closeModal() {
       this.modal.show = false
       /* Keep data for a tick so animation finishes cleanly */
       setTimeout(() => {
-        this.modal = { show: false, success: false, orderId: '', reason: '' }
+        this.modal = { show: false, success: false, orderId: '', amount: 0, reason: '' }
       }, 300)
     },
     goToOrders() {
-      window.location.href = 'order.html'
+      window.location.href = '/pay.html?orderId=' + this.modal.orderId + '&amount=' + this.modal.amount + '&type=seckill'
     }
   },
 

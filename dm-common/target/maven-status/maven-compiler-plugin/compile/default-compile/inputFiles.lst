@@ -9,10 +9,12 @@ D:\JavaWeb-Project\LLMproject\digital-mall\dm-common\src\main\java\com\digital\m
 D:\JavaWeb-Project\LLMproject\digital-mall\dm-common\src\main\java\com\digital\mall\common\domain\PageDTO.java
 D:\JavaWeb-Project\LLMproject\digital-mall\dm-common\src\main\java\com\digital\mall\common\domain\PageQuery.java
 D:\JavaWeb-Project\LLMproject\digital-mall\dm-common\src\main\java\com\digital\mall\common\exception\ForbiddenException.java
+D:\JavaWeb-Project\LLMproject\digital-mall\dm-common\src\main\java\com\digital\mall\common\config\MqConfig.java
 D:\JavaWeb-Project\LLMproject\digital-mall\dm-common\src\main\java\com\digital\mall\common\config\MvcConfig.java
 D:\JavaWeb-Project\LLMproject\digital-mall\dm-common\src\main\java\com\digital\mall\common\config\MyBatisConfig.java
 D:\JavaWeb-Project\LLMproject\digital-mall\dm-common\src\main\java\com\digital\mall\common\interceptor\UserinfoInterceptor.java
 D:\JavaWeb-Project\LLMproject\digital-mall\dm-common\src\main\java\com\digital\mall\common\exception\CommonException.java
 D:\JavaWeb-Project\LLMproject\digital-mall\dm-common\src\main\java\com\digital\mall\common\domain\Result.java
+D:\JavaWeb-Project\LLMproject\digital-mall\dm-common\src\main\java\com\digital\mall\common\config\RedisIdWorker.java
 D:\JavaWeb-Project\LLMproject\digital-mall\dm-common\src\main\java\com\digital\mall\common\exception\BadRequestException.java
 D:\JavaWeb-Project\LLMproject\digital-mall\dm-common\src\main\java\com\digital\mall\common\utils\CollUtils.java

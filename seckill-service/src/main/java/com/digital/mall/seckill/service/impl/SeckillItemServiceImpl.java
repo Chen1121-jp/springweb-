@@ -23,7 +23,7 @@ public class SeckillItemServiceImpl extends ServiceImpl<SeckillItemMapper, Secki
 
     @Override
     public void saveWithItemId(Long itemId) {
-        ItemDTO itemDTO = itemClient.queryItemById(itemId);
+        ItemDTO itemDTO = itemClient.queryItemById(itemId).getData();
         if (itemDTO == null) {
             throw new RuntimeException("商品不存在");
         }
@@ -32,6 +32,9 @@ public class SeckillItemServiceImpl extends ServiceImpl<SeckillItemMapper, Secki
         }
         SeckillItem seckillItem = new SeckillItem();
         seckillItem.setId(itemId);
+        seckillItem.setName(itemDTO.getName());
+        seckillItem.setImage(itemDTO.getImage());
+        seckillItem.setOriginalPrice(itemDTO.getPrice());
         seckillItem.setSeckillPrice(itemDTO.getPrice());
         seckillItem.setStock(itemDTO.getStock());
         seckillItem.setBeginTime(LocalDateTime.now());
@@ -45,10 +48,12 @@ public class SeckillItemServiceImpl extends ServiceImpl<SeckillItemMapper, Secki
 
     @Override
     public void returnStock(Long id, int i) {
-        SeckillItem seckillItem = this.getById(id);
-        seckillItem.setStock(seckillItem.getStock() + i);
-        this.updateById(seckillItem);
-        log.info("回退库存成功：{}", seckillItem);
+        // 原子更新，避免并发回滚 lost update
+        this.update()
+                .setSql("stock = stock + " + i)
+                .eq("id", id)
+                .update();
+        log.info("回退库存成功：id={}, delta={}", id, i);
         // 回退 item 库存
         itemClient.returnStock(id);
     }

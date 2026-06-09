@@ -1,9 +1,9 @@
-com\digital\mall\user\service\impl\UserServiceImpl.class
 com\digital\mall\user\mapper\UserMapper.class
-com\digital\mall\user\mapper\AddressMapper.class
 com\digital\mall\user\controller\UserController.class
 com\digital\mall\user\UserApplication.class
 com\digital\mall\user\service\impl\AddressServiceImpl.class
+com\digital\mall\user\service\impl\UserServiceImpl.class
+com\digital\mall\user\mapper\AddressMapper.class
 com\digital\mall\user\service\IAddressService.class
 com\digital\mall\user\domain\po\User.class
 com\digital\mall\user\domain\po\Address.class

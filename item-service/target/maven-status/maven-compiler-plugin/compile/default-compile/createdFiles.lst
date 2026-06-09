@@ -1,6 +1,17 @@
 com\digital\mall\item\ItemApplication.class
+com\digital\mall\item\config\MqSyncConfig.class
+com\digital\mall\item\service\ItemSyncService.class
+com\digital\mall\item\domain\dto\SearchSuggestionDTO.class
+com\digital\mall\item\repository\ItemDocumentRepository.class
+com\digital\mall\item\domain\dto\ItemSyncMessage$ItemSyncMessageBuilder.class
+com\digital\mall\item\service\impl\ESSearchServiceImpl.class
 com\digital\mall\item\controller\ItemController.class
 com\digital\mall\item\service\impl\ItemServiceImpl.class
+com\digital\mall\item\domain\doc\ItemDocument$ItemDocumentBuilder.class
 com\digital\mall\item\mapper\ItemMapper.class
 com\digital\mall\item\domain\po\Item.class
+com\digital\mall\item\domain\dto\ItemSyncMessage.class
+com\digital\mall\item\service\SearchService.class
+com\digital\mall\item\domain\doc\ItemDocument.class
+com\digital\mall\item\domain\dto\SearchSuggestionDTO$SearchSuggestionDTOBuilder.class
 com\digital\mall\item\service\IItemService.class

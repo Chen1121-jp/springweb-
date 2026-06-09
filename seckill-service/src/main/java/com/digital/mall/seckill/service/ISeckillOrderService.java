@@ -6,4 +6,6 @@ import com.digital.mall.seckill.domain.SeckillOrder;
 public interface ISeckillOrderService extends IService<SeckillOrder> {
 
     Long seckillOrder(Long itemId);
+
+    void markOrderPaySuccess(Long orderId);
 }

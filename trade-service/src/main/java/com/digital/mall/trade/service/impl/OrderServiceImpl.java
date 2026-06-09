@@ -7,7 +7,7 @@ import com.digital.mall.api.dto.ItemDTO;
 import com.digital.mall.api.dto.OrderDetailDTO;
 import com.digital.mall.common.exception.BadRequestException;
 import com.digital.mall.common.utils.UserContext;
-import com.digital.mall.trade.constants.MqConstants;
+import com.digital.mall.common.constants.MQConstants;
 import com.digital.mall.trade.domain.dto.OrderFormDTO;
 import com.digital.mall.trade.domain.po.Order;
 import com.digital.mall.trade.domain.po.OrderDetail;
@@ -45,7 +45,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         Set<Long> itemIds = itemNumMap.keySet();
 
         // 2. 查询商品
-        List<ItemDTO> items = itemClient.queryItemByIds(itemIds);
+        List<ItemDTO> items = itemClient.queryItemByIds(itemIds).getData();
         if (items == null || items.size() < itemIds.size()) {
             throw new BadRequestException("商品不存在");
         }
@@ -80,8 +80,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
         // 8. 发送延迟消息（用于超时未支付自动取消）
         rabbitTemplate.convertAndSend(
-                MqConstants.DELAY_EXCHANGE_NAME,
-                MqConstants.DELAY_ORDER_KEY,
+                MQConstants.DELAY_EXCHANGE_NAME,
+                MQConstants.TRADE_DELAY_KEY,
                 order.getId(),
                 message -> {
                     message.getMessageProperties().setHeader("x-delay", 1000 * 60);

@@ -28,33 +28,34 @@ public class PayController {
 
     @Operation(summary = "根据业务订单号查询支付单")
     @GetMapping("/biz/{id}")
-    public PayOrderDTO queryPayOrderByBizOrderNo(@PathVariable("id") Long id) {
+    public Result<PayOrderDTO> queryPayOrderByBizOrderNo(@PathVariable("id") Long id) {
         PayOrder payOrder = payOrderService.lambdaQuery().eq(PayOrder::getBizOrderNo, id).one();
-        return BeanUtils.copyBean(payOrder, PayOrderDTO.class);
+        return Result.ok(BeanUtils.copyBean(payOrder, PayOrderDTO.class));
     }
 
     @Operation(summary = "查询支付单列表")
     @GetMapping
-    public List<PayOrderVO> queryPayOrders() {
-        return BeanUtils.copyList(payOrderService.list(), PayOrderVO.class);
+    public Result<List<PayOrderVO>> queryPayOrders() {
+        return Result.ok(BeanUtils.copyList(payOrderService.list(), PayOrderVO.class));
     }
 
     @Operation(summary = "生成支付单")
     @PostMapping
-    public String applyPayOrder(@RequestBody PayApplyDTO applyDTO) {
+    public Result<String> applyPayOrder(@RequestBody PayApplyDTO applyDTO) {
         if (!PayType.BALANCE.equalsValue(applyDTO.getPayType())) {
             throw new BizIllegalException("抱歉，目前只支持余额支付");
         }
-        return payOrderService.applyPayOrder(applyDTO);
+        return Result.ok(payOrderService.applyPayOrder(applyDTO));
     }
 
     @Operation(summary = "尝试基于用户余额支付")
     @PostMapping("/{id}")
-    public void tryPayOrderByBalance(
+    public Result<Void> tryPayOrderByBalance(
             @Parameter(description = "支付单id") @PathVariable("id") Long id,
             @RequestBody PayOrderFormDTO payOrderFormDTO) {
         payOrderFormDTO.setId(id);
         payOrderService.tryPayOrderByBalance(payOrderFormDTO);
+        return Result.ok();
     }
 
     @Operation(summary = "健康检查")

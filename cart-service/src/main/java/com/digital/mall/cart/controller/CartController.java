@@ -24,32 +24,36 @@ public class CartController {
 
     @Operation(summary = "添加商品到购物车")
     @PostMapping
-    public void addItem2Cart(@Valid @RequestBody CartFormDTO cartFormDTO) {
+    public Result<Void> addItem2Cart(@Valid @RequestBody CartFormDTO cartFormDTO) {
         cartService.addItem2Cart(cartFormDTO);
+        return Result.ok();
     }
 
     @Operation(summary = "更新购物车数据")
     @PutMapping
-    public void updateCart(@RequestBody Cart cart) {
+    public Result<Void> updateCart(@RequestBody Cart cart) {
         cartService.updateById(cart);
+        return Result.ok();
     }
 
     @Operation(summary = "删除购物车中商品")
     @DeleteMapping("/{id}")
-    public void deleteCartItem(@Parameter(description = "购物车条目id") @PathVariable("id") Long id) {
+    public Result<Void> deleteCartItem(@Parameter(description = "购物车条目id") @PathVariable("id") Long id) {
         cartService.removeById(id);
+        return Result.ok();
     }
 
     @Operation(summary = "查询购物车列表")
     @GetMapping
-    public List<CartVO> queryMyCarts() {
-        return cartService.queryMyCarts();
+    public Result<List<CartVO>> queryMyCarts() {
+        return Result.ok(cartService.queryMyCarts());
     }
 
     @Operation(summary = "批量删除购物车中商品")
     @DeleteMapping
-    public void deleteCartItemByIds(@Parameter(description = "购物车条目id集合") @RequestParam("ids") List<Long> ids) {
+    public Result<Void> deleteCartItemByIds(@Parameter(description = "购物车条目id集合") @RequestParam("ids") List<Long> ids) {
         cartService.removeByItemIds(ids);
+        return Result.ok();
     }
 
     @Operation(summary = "健康检查")

@@ -587,8 +587,8 @@ var app = createApp({
       .catch(function (err) {
         self.addressSaving = false;
         var msg = '保存地址失败';
-        if (err.response && err.response.data && err.response.data.message) {
-          msg = err.response.data.message;
+        if (err.response && err.response.data && (err.response.data.msg || err.response.data.message)) {
+          msg = err.response.data.msg || err.response.data.message;
         } else if (err.message) {
           msg = err.message;
         }
@@ -665,8 +665,7 @@ var app = createApp({
       })
       .then(function (res) {
         self.submitting = false;
-        var data = res.code !== undefined ? (res.code === 0 ? res.data : res) : res;
-        var orderId = data.id || data.orderId || data;
+        var orderId = res.data;
         if (typeof orderId === 'object') { orderId = orderId.id || orderId.orderId; }
         location.href = '/pay.html?orderId=' + encodeURIComponent(orderId);
       })

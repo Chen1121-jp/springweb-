@@ -1,0 +1,6 @@
+package com.digital.mall.chat.ai.tool;
+
+import java.util.Map;
+
+public record ToolDefinition(String name, String description, Map<String, Object> parameters) {
+}

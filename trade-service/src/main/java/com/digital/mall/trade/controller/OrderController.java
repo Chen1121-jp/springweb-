@@ -25,30 +25,31 @@ public class OrderController {
 
     @Operation(summary = "根据id查询订单")
     @GetMapping("/{id}")
-    public OrderVO queryOrderById(@Parameter(description = "订单id") @PathVariable("id") Long orderId) {
-        return BeanUtils.copyBean(orderService.getById(orderId), OrderVO.class);
+    public Result<OrderVO> queryOrderById(@Parameter(description = "订单id") @PathVariable("id") Long orderId) {
+        return Result.ok(BeanUtils.copyBean(orderService.getById(orderId), OrderVO.class));
     }
 
     @Operation(summary = "查询当前用户订单列表")
     @GetMapping
-    public List<OrderVO> queryUserOrders() {
+    public Result<List<OrderVO>> queryUserOrders() {
         List<Order> orders = orderService.query()
                 .eq("user_id", UserContext.getUser())
                 .orderByDesc("create_time")
                 .list();
-        return BeanUtils.copyList(orders, OrderVO.class);
+        return Result.ok(BeanUtils.copyList(orders, OrderVO.class));
     }
 
     @Operation(summary = "创建订单")
     @PostMapping
-    public Long createOrder(@RequestBody OrderFormDTO orderFormDTO) {
-        return orderService.createOrder(orderFormDTO);
+    public Result<Long> createOrder(@RequestBody OrderFormDTO orderFormDTO) {
+        return Result.ok(orderService.createOrder(orderFormDTO));
     }
 
     @Operation(summary = "标记订单已支付")
     @PutMapping("/{orderId}")
-    public void markOrderPaySuccess(@Parameter(description = "订单id") @PathVariable("orderId") Long orderId) {
+    public Result<Void> markOrderPaySuccess(@Parameter(description = "订单id") @PathVariable("orderId") Long orderId) {
         orderService.markOrderPaySuccess(orderId);
+        return Result.ok();
     }
 
     @Operation(summary = "健康检查")

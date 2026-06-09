@@ -250,8 +250,8 @@ createApp({
       axios.get('/orders/' + orderId)
         .then(function (res) {
           self.loading = false;
-          // 兼容 { code:0, data:{...} } 和直接返回对象两种格式
-          var data = (res && res.code !== undefined) ? (res.code === 0 ? res.data : null) : res;
+          // Result<T> 统一返回: { code:200, msg:"OK", data:OrderVO }
+          var data = (res && res.data) ? res.data : null;
           if (!data) {
             self.errorMsg = '订单信息异常，请联系客服';
             return;
@@ -270,8 +270,8 @@ createApp({
             self.errorMsg = '未找到该订单，请确认订单号是否正确';
           } else if (status === 401) {
             self.errorMsg = '请先登录后再查看订单';
-          } else if (resp.data && resp.data.message) {
-            self.errorMsg = resp.data.message;
+          } else if (resp.data && (resp.data.msg || resp.data.message)) {
+            self.errorMsg = resp.data.msg || resp.data.message;
           } else {
             self.errorMsg = '获取订单信息失败，请稍后重试';
           }

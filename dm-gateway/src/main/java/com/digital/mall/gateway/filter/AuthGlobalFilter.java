@@ -27,11 +27,16 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        ServerHttpRequest request = exchange.getRequest();
+        boolean optional = isExclude(exchange.getRequest().getPath().toString());
+        return resolveUser(exchange, chain, optional);
+    }
 
-        if (isExclude(request.getPath().toString())) {
-            return chain.filter(exchange);
-        }
+    /**
+     * 解析 JWT 并设置 user-info 头。
+     * @param optional 为 true 时 token 缺失或无效不拒绝请求（白名单路径）
+     */
+    private Mono<Void> resolveUser(ServerWebExchange exchange, GatewayFilterChain chain, boolean optional) {
+        ServerHttpRequest request = exchange.getRequest();
 
         String token = null;
         List<String> headers = request.getHeaders().get("authorization");
@@ -39,21 +44,29 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
             token = headers.get(0);
         }
 
-        Long userId;
-        try {
-            userId = jwtTool.parseToken(token);
-        } catch (UnauthorizedException e) {
+        if (token == null) {
+            if (optional) {
+                return chain.filter(exchange);
+            }
             ServerHttpResponse response = exchange.getResponse();
             response.setStatusCode(HttpStatus.UNAUTHORIZED);
             return response.setComplete();
         }
 
-        String userInfo = userId.toString();
-        ServerWebExchange swe = exchange.mutate()
-                .request(builder -> builder.header("user-info", userInfo))
-                .build();
-
-        return chain.filter(swe);
+        try {
+            Long userId = jwtTool.parseToken(token);
+            ServerWebExchange swe = exchange.mutate()
+                    .request(builder -> builder.header("user-info", userId.toString()))
+                    .build();
+            return chain.filter(swe);
+        } catch (UnauthorizedException e) {
+            if (optional) {
+                return chain.filter(exchange);
+            }
+            ServerHttpResponse response = exchange.getResponse();
+            response.setStatusCode(HttpStatus.UNAUTHORIZED);
+            return response.setComplete();
+        }
     }
 
     private boolean isExclude(String path) {

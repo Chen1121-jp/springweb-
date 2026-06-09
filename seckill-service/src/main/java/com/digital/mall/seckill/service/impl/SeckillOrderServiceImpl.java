@@ -16,6 +16,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 
 @Slf4j
@@ -69,10 +70,10 @@ public class SeckillOrderServiceImpl extends ServiceImpl<SeckillOrderMapper, Sec
             // 5. 延迟消息（超时未支付自动回滚）
             rabbitTemplate.convertAndSend(
                     MQConstants.DELAY_EXCHANGE_NAME,
-                    MQConstants.DELAY_ORDER_KEY,
+                    MQConstants.SECKILL_DELAY_KEY,
                     seckillOrder.getId(),
                     message -> {
-                        message.getMessageProperties().setDelay(1000 * 30);
+                        message.getMessageProperties().setDelayLong(1000 * 60 * 2L);
                         return message;
                     });
             log.info("延迟消息已发送");
@@ -81,5 +82,14 @@ public class SeckillOrderServiceImpl extends ServiceImpl<SeckillOrderMapper, Sec
         }
 
         return orderId;
+    }
+
+    @Override
+    public void markOrderPaySuccess(Long orderId) {
+        SeckillOrder order = new SeckillOrder();
+        order.setId(orderId);
+        order.setStatus(1);                    // 1 = 已支付
+        order.setPayTime(LocalDateTime.now());
+        updateById(order);
     }
 }

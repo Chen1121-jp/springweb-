@@ -3,6 +3,7 @@ package com.digital.mall.api.client.fallback;
 import com.digital.mall.api.client.ItemClient;
 import com.digital.mall.api.dto.ItemDTO;
 import com.digital.mall.api.dto.OrderDetailDTO;
+import com.digital.mall.common.domain.Result;
 import com.digital.mall.common.exception.BizIllegalException;
 import com.digital.mall.common.utils.CollUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -18,10 +19,10 @@ public class ItemClientFallback implements FallbackFactory<ItemClient> {
     public ItemClient create(Throwable cause) {
         return new ItemClient() {
             @Override
-            public List<ItemDTO> queryItemByIds(Collection<Long> ids) {
+            public Result<List<ItemDTO>> queryItemByIds(Collection<Long> ids) {
                 log.error("远程调用 ItemClient#queryItemByIds 方法出现异常，参数：{}", ids, cause);
                 // 查询购物车允许失败，查询失败返回空集合
-                return CollUtils.emptyList();
+                return Result.ok(CollUtils.emptyList());
             }
 
             @Override
@@ -31,9 +32,9 @@ public class ItemClientFallback implements FallbackFactory<ItemClient> {
             }
 
             @Override
-            public ItemDTO queryItemById(Long id) {
+            public Result<ItemDTO> queryItemById(Long id) {
                 log.error("远程调用 ItemClient#queryItemById 方法出现异常，id：{}", id, cause);
-                return null;
+                return Result.ok(null);
             }
 
             @Override

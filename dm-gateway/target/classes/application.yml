@@ -60,3 +60,4 @@ dm:
       - /items/**
       - /hi
       - /files/view/**
+      - /chat/**

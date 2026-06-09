@@ -29,7 +29,7 @@
       border: 2px solid var(--primary);
       box-shadow: 0 4px 24px rgba(255,107,53,.14);
       display: flex;
-      overflow: hidden;
+      overflow: visible;
       background: #fff;
     }
     .search-hero .search-bar input {
@@ -50,61 +50,18 @@
       box-shadow: inset 0 0 0 1px rgba(255,255,255,.2);
     }
 
-    /* — Filter / Sort Row — */
-    .toolbar {
-      display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
-      padding: 18px 0 12px;
+    /* sort chips */
+    .sort-bar {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 0;
       border-bottom: 1px solid var(--border-light);
-      margin-bottom: 20px;
+      margin-bottom: 8px;
     }
-    .toolbar__label {
+    .sort-bar__label {
       font: 600 13px 'Nunito Sans', sans-serif;
       color: var(--text-secondary);
-      margin-right: 4px;
       white-space: nowrap;
     }
-    .toolbar .filter-tag {
-      padding: 7px 16px; border-radius: 20px;
-      background: var(--border-light); font: 500 13px 'Nunito Sans', sans-serif;
-      color: var(--text-secondary); cursor: pointer;
-      transition: all .2s var(--ease);
-      border: 1.5px solid transparent;
-      white-space: nowrap;
-      user-select: none;
-    }
-    .toolbar .filter-tag:hover {
-      background: var(--primary-dim);
-      color: var(--primary-dark);
-      border-color: var(--primary-dim);
-    }
-    .toolbar .filter-tag.selected {
-      background: var(--primary); color: #fff; border-color: var(--primary);
-      box-shadow: 0 2px 8px rgba(255,107,53,.2);
-    }
-
-    /* price group */
-    .price-tags { display: flex; flex-wrap: wrap; gap: 8px; }
-    .price-tag {
-      padding: 6px 13px; border-radius: 18px;
-      background: #fff; border: 1.5px solid var(--border);
-      font: 500 12px 'Nunito Sans', sans-serif;
-      color: var(--text-secondary); cursor: pointer;
-      transition: all .2s var(--ease);
-      white-space: nowrap;
-      user-select: none;
-    }
-    .price-tag:hover {
-      border-color: var(--primary-dim);
-      color: var(--primary-dark);
-      background: var(--primary-light);
-    }
-    .price-tag.selected {
-      border-color: var(--primary); background: var(--primary);
-      color: #fff; box-shadow: 0 2px 8px rgba(255,107,53,.18);
-      font-weight: 700;
-    }
-
-    /* sort chips */
     .sort-chips { display: flex; gap: 6px; }
     .sort-chip {
       display: inline-flex; align-items: center; gap: 4px;
@@ -189,10 +146,25 @@
       padding: 72px 0;
     }
 
+    /* suggest box */
+    .search-hero .search-bar { position: relative; }
+    .suggest-box {
+      position: absolute; top: 100%; left: 0; right: 0;
+      background: #fff; border: 1px solid var(--border);
+      border-radius: 0 0 12px 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.1); z-index: 100;
+      text-align: left; overflow: hidden;
+    }
+    .suggest-item {
+      padding: 12px 20px; font: 500 14px 'Nunito Sans', sans-serif;
+      cursor: pointer; transition: background .15s;
+    }
+    .suggest-item:hover { background: var(--primary-light); }
+    .suggest-item mark { background: none; color: var(--primary); font-weight: 700; }
+
     /* responsive */
     @media (max-width: 768px) {
-      .toolbar { gap: 6px; }
-      .toolbar .filter-tag { padding: 6px 12px; font-size: 12px; }
+      .sort-bar { gap: 6px; }
       .sort-chip { padding: 6px 10px; font-size: 12px; }
       .search-hero h2 { font-size: 24px; }
     }
@@ -213,56 +185,21 @@
           type="text"
           v-model="keyword"
           placeholder="搜索商品名称、品牌、分类..."
-          @keyup.enter="handleSearch"
+          @keyup.enter="handleSearch" @input="onKeywordInput" @blur="hideSuggest"
         >
         <button @click="handleSearch">🔍 搜索</button>
+        <div class="suggest-box" v-if="showSuggest && suggestions.length > 0">
+          <div class="suggest-item" v-for="(s, idx) in suggestions" :key="idx"
+               @mousedown.prevent="selectSuggestion(s)">
+            🔍 <span v-html="s.highlight || s.text"></span>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- ====== Filter Toolbar ====== -->
-    <div class="toolbar">
-      <span class="toolbar__label">分类</span>
-      <span
-        class="filter-tag"
-        :class="{ selected: selectedCategory === '' }"
-        @click="selectCategory('')"
-      >全部</span>
-      <span
-        v-for="cat in categories"
-        :key="cat"
-        class="filter-tag"
-        :class="{ selected: selectedCategory === cat }"
-        @click="selectCategory(cat)"
-      >{{ cat }}</span>
-
-      <span class="toolbar__label" style="margin-left:12px;">品牌</span>
-      <span
-        class="filter-tag"
-        :class="{ selected: selectedBrand === '' }"
-        @click="selectBrand('')"
-      >全部</span>
-      <span
-        v-for="b in brands"
-        :key="b"
-        class="filter-tag"
-        :class="{ selected: selectedBrand === b }"
-        @click="selectBrand(b)"
-      >{{ b }}</span>
-    </div>
-
-    <!-- ====== Price Range & Sort ====== -->
-    <div class="flex-between" style="flex-wrap:wrap;gap:12px;padding:12px 0;border-bottom:1px solid var(--border-light);margin-bottom:8px;">
-      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-        <span class="toolbar__label">💰 价格</span>
-        <span
-          v-for="pr in priceRanges"
-          :key="pr.label"
-          class="price-tag"
-          :class="{ selected: priceMin === pr.min && priceMax === pr.max }"
-          @click="selectPrice(pr.min, pr.max)"
-        >{{ pr.label }}</span>
-      </div>
-
+    <!-- ====== Sort Bar ====== -->
+    <div class="sort-bar">
+      <span class="sort-bar__label">排序</span>
       <div class="sort-chips">
         <span
           class="sort-chip"
@@ -271,11 +208,11 @@
         >默认</span>
         <span
           class="sort-chip"
-          :class="{ active: sortBy === 'sales' }"
-          @click="changeSort('sales')"
+          :class="{ active: sortBy === 'sold' }"
+          @click="changeSort('sold')"
         >
           销量
-          <span v-if="sortBy === 'sales'" class="arrow" :class="{ desc: !isAsc }">▼</span>
+          <span v-if="sortBy === 'sold'" class="arrow" :class="{ desc: !isAsc }">▼</span>
         </span>
         <span
           class="sort-chip"
@@ -310,10 +247,10 @@
           <span class="category-badge" v-if="item.category">{{ item.category }}</span>
         </div>
         <div class="info">
-          <div class="name">{{ item.name }}</div>
+          <div class="name" v-html="item.name"></div>
           <div class="meta-row">
             <span v-if="item.brand" class="brand-tag">{{ item.brand }}</span>
-            <span class="sales-info" v-if="item.sales">已售 {{ util.formatCount(item.sales) }}</span>
+            <span class="sales-info" v-if="item.sold">已售 {{ util.formatCount(item.sold) }}</span>
           </div>
           <div style="display:flex;align-items:baseline;gap:6px;">
             <span class="price">{{ util.formatPrice(item.price) }}</span>
@@ -349,13 +286,10 @@
         :class="{ disabled: currentPage <= 1 }"
         @click="changePage(currentPage - 1)"
       >&laquo;</a>
-      <a
-        class="page-btn"
-        v-for="p in displayPages"
-        :key="p"
-        :class="{ current: p === currentPage }"
-        @click="changePage(p)"
-      >{{ p }}</a>
+      <template v-for="p in displayPages" :key="p">
+        <span v-if="p === '...'" class="ellipsis">...</span>
+        <a v-else class="page-btn" :class="{ current: p === currentPage }" @click="changePage(p)">{{ p }}</a>
+      </template>
       <span class="ellipsis" v-if="showRightEllipsis">...</span>
       <a
         class="page-btn"
@@ -391,29 +325,13 @@ createApp({
       loading: false,
 
       // sort state
-      sortBy: '',      // '' | 'sales' | 'price'
+      sortBy: '',      // '' | 'sold' | 'price'
       isAsc: true,
 
-      // filter state
-      selectedCategory: '',
-      selectedBrand: '',
-      priceMin: null,
-      priceMax: null,
-
-      // filter data
-      categories: [],
-      brands: [],
-
-      // price range presets
-      priceRanges: [
-        { label: '全部', min: null, max: null },
-        { label: '￥100以下', min: 0, max: 10000 },
-        { label: '￥100-299', min: 10000, max: 29900 },
-        { label: '￥300-599', min: 30000, max: 59900 },
-        { label: '￥600-899', min: 60000, max: 89900 },
-        { label: '￥900-1599', min: 90000, max: 159900 },
-        { label: '￥1600以上', min: 160000, max: null }
-      ],
+      // suggest state
+      suggestions: [],
+      showSuggest: false,
+      suggestTimer: null,
 
       // exposed refs
       util
@@ -422,7 +340,7 @@ createApp({
 
   computed: {
     hasFilters() {
-      return this.selectedCategory || this.selectedBrand || this.priceMin !== null || this.priceMax !== null || this.sortBy !== '';
+      return this.sortBy !== '';
     },
     displayPages() {
       const pages = [];
@@ -447,22 +365,29 @@ createApp({
   },
 
   methods: {
-    // ---- fetch filters ----
-    fetchFilters() {
-      // try to fetch categories & brands from API; use fallback on failure
-      axios.get('/items/categories').then(r => {
-        if (Array.isArray(r)) this.categories = r;
-        else if (r && Array.isArray(r.data)) this.categories = r.data;
-      }).catch(() => {
-        this.categories = ['手机数码', '电脑办公', '家用电器', '服饰鞋包', '美妆护肤', '食品生鲜', '图书文娱'];
-      });
-
-      axios.get('/items/brands').then(r => {
-        if (Array.isArray(r)) this.brands = r;
-        else if (r && Array.isArray(r.data)) this.brands = r.data;
-      }).catch(() => {
-        this.brands = ['华为', '苹果', '小米', '索尼', '联想', '戴尔', '耐克', '阿迪达斯', '兰蔻'];
-      });
+    // ---- suggest ----
+    onKeywordInput() {
+      if (this.suggestTimer) clearTimeout(this.suggestTimer);
+      const kw = this.keyword.trim();
+      if (!kw) { this.suggestions = []; this.showSuggest = false; return; }
+      this.suggestTimer = setTimeout(() => {
+        axios.get('/search/suggest', { params: { keyword: kw } })
+          .then(resp => {
+            const data = resp.data || resp;
+            if (Array.isArray(data)) {
+              this.suggestions = data.slice(0, 10);
+              this.showSuggest = this.suggestions.length > 0;
+            }
+          }).catch(() => { this.suggestions = []; });
+      }, 300);
+    },
+    selectSuggestion(s) {
+      this.keyword = s.text;
+      this.showSuggest = false;
+      this.handleSearch();
+    },
+    hideSuggest() {
+      setTimeout(() => { this.showSuggest = false; }, 200);
     },
 
     // ---- search ----
@@ -482,7 +407,7 @@ createApp({
 
       // keyword
       if (this.keyword && this.keyword.trim()) {
-        params.name = this.keyword.trim();
+        params.key = this.keyword.trim();
       }
 
       // sort
@@ -491,25 +416,7 @@ createApp({
         params.isAsc = this.isAsc;
       }
 
-      // category — pass as query param if API supports it
-      if (this.selectedCategory) {
-        params.category = this.selectedCategory;
-      }
-
-      // brand
-      if (this.selectedBrand) {
-        params.brand = this.selectedBrand;
-      }
-
-      // price range (in cents)
-      if (this.priceMin !== null) {
-        params.priceMin = this.priceMin;
-      }
-      if (this.priceMax !== null) {
-        params.priceMax = this.priceMax;
-      }
-
-      axios.get('/items/page', { params })
+      axios.get('/search/list', { params })
         .then(resp => {
           // handle various response shapes
           const data = resp.data || resp;
@@ -546,38 +453,8 @@ createApp({
         });
     },
 
-    // ---- filters ----
-    selectCategory(cat) {
-      this.selectedCategory = cat;
-      this.currentPage = 1;
-      this.doSearch();
-    },
-
-    selectBrand(brand) {
-      this.selectedBrand = brand;
-      this.currentPage = 1;
-      this.doSearch();
-    },
-
-    selectPrice(min, max) {
-      if (this.priceMin === min && this.priceMax === max) {
-        // deselect
-        this.priceMin = null;
-        this.priceMax = null;
-      } else {
-        this.priceMin = min;
-        this.priceMax = max;
-      }
-      this.currentPage = 1;
-      this.doSearch();
-    },
-
     clearAll() {
       this.keyword = '';
-      this.selectedCategory = '';
-      this.selectedBrand = '';
-      this.priceMin = null;
-      this.priceMax = null;
       this.sortBy = '';
       this.isAsc = true;
       this.currentPage = 1;
@@ -603,6 +480,7 @@ createApp({
 
     // ---- pagination ----
     changePage(page) {
+      if (page === '...') return;
       if (page < 1 || page > this.totalPages || page === this.currentPage) return;
       this.currentPage = page;
       this.doSearch();
@@ -622,7 +500,7 @@ createApp({
       }
       axios.post('/carts', {
         itemId: item.id,
-        name: item.name,
+        name: item.name.replace(/<[^>]+>/g, ''),
         spec: item.spec || '',
         price: item.price,
         image: item.image || ''
@@ -642,9 +520,6 @@ createApp({
     if (key) {
       this.keyword = decodeURIComponent(key);
     }
-
-    // load filter options
-    this.fetchFilters();
 
     // initial search
     this.doSearch();

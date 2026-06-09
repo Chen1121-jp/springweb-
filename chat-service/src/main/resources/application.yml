@@ -4,12 +4,54 @@ server:
 spring:
   application:
     name: chat-service
+  data:
+    redis:
+      host: ${dm.redis.host:localhost}
+      port: 6379
+      database: 8
+      timeout: 10000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+  elasticsearch:
+    host: localhost
+    port: 9200
   profiles:
     active: local
   cloud:
     nacos:
       server-addr: ${dm.nacos.host:localhost}:8848
-
+    openfeign:
+      client:
+        config:
+          item-service:
+            url: http://localhost:8081
+          trade-service:
+            url: http://localhost:8084
+langchain4j:
+  open-ai:
+    chat-model:
+      api-key: ${AI_API_KEY:sk-8e5fa6045a244fa1a762822bc1ddd89a}
+      model-name: deepseek-chat
+      base-url: https://api.deepseek.com
+      timeout: 60s
+      max-tokens: 2048
+      temperature: 0.7
+    streaming-chat-model: # 新增，流式
+      api-key: ${AI_API_KEY:sk-8e5fa6045a244fa1a762822bc1ddd89a}
+      model-name: deepseek-chat
+      base-url: https://api.deepseek.com
+      temperature: 0.7
+      max-tokens: 2048
+    embedding-model: # ← 新增：Ollama 向量化
+      api-key: ignored
+      model-name: nomic-embed-text
+      base-url: http://localhost:11434/v1
 logging:
   level:
     com.digital.mall: debug
+    org.springframework.cloud.openfeign: DEBUG
+    org.springframework.cloud.loadbalancer: DEBUG
+

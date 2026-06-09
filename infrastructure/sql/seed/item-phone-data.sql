@@ -31,6 +31,23 @@ INSERT INTO item.item (name, price, stock, image, category, brand, spec, sold, c
 ('iPhone 16 128GB 黑色', 599900, 900, 'https://example.com/images/iphone16.jpg', '手机', 'Apple', '{"颜色":"黑色","存储":"128GB","屏幕":"6.1英寸","芯片":"A18"}', 120345, 20123, FALSE, 1, NOW(), NOW(), 1, 1),
 ('iPhone 16e 256GB 黑色', 449900, 600, 'https://example.com/images/iphone16e.jpg', '手机', 'Apple', '{"颜色":"黑色","存储":"256GB","屏幕":"6.1英寸","芯片":"A18"}', 45678, 7890, FALSE, 1, NOW(), NOW(), 1, 1);
 
+-- ======== iPhone 17 系列 (15条) ========
+INSERT INTO item.item (name, price, stock, image, category, brand, spec, sold, comment_count, is_ad, status, create_time, update_time, creater, updater) VALUES
+('iPhone 17 Pro Max 256GB 流光金', 1099900, 450, 'https://example.com/images/iphone17-promax.jpg', '手机', 'Apple', '{"颜色":"流光金","存储":"256GB","屏幕":"6.9英寸","芯片":"A19 Pro","网络":"5G"}', 76231, 11340, TRUE, 1, NOW(), NOW(), 1, 1),
+('iPhone 17 Pro Max 512GB 暗夜紫', 1249900, 350, 'https://example.com/images/iphone17-promax.jpg', '手机', 'Apple', '{"颜色":"暗夜紫","存储":"512GB","屏幕":"6.9英寸","芯片":"A19 Pro","网络":"5G"}', 48210, 7560, FALSE, 1, NOW(), NOW(), 1, 1),
+('iPhone 17 Pro Max 1TB 星河银', 1499900, 180, 'https://example.com/images/iphone17-promax.jpg', '手机', 'Apple', '{"颜色":"星河银","存储":"1TB","屏幕":"6.9英寸","芯片":"A19 Pro","网络":"5G"}', 28145, 4890, FALSE, 1, NOW(), NOW(), 1, 1),
+('iPhone 17 Pro 256GB 深空蓝', 949900, 550, 'https://example.com/images/iphone17-pro.jpg', '手机', 'Apple', '{"颜色":"深空蓝","存储":"256GB","屏幕":"6.3英寸","芯片":"A19 Pro","网络":"5G"}', 64310, 9870, TRUE, 1, NOW(), NOW(), 1, 1),
+('iPhone 17 Pro 512GB 星光金', 1099900, 380, 'https://example.com/images/iphone17-pro.jpg', '手机', 'Apple', '{"颜色":"星光金","存储":"512GB","屏幕":"6.3英寸","芯片":"A19 Pro","网络":"5G"}', 39872, 6340, FALSE, 1, NOW(), NOW(), 1, 1),
+('iPhone 17 Pro 1TB 暮光紫', 1349900, 150, 'https://example.com/images/iphone17-pro.jpg', '手机', 'Apple', '{"颜色":"暮光紫","存储":"1TB","屏幕":"6.3英寸","芯片":"A19 Pro","网络":"5G"}', 18920, 3120, FALSE, 1, NOW(), NOW(), 1, 1),
+('iPhone 17 256GB 冰雾蓝', 749900, 750, 'https://example.com/images/iphone17.jpg', '手机', 'Apple', '{"颜色":"冰雾蓝","存储":"256GB","屏幕":"6.1英寸","芯片":"A19","网络":"5G"}', 98780, 16540, TRUE, 1, NOW(), NOW(), 1, 1),
+('iPhone 17 512GB 樱语粉', 899900, 500, 'https://example.com/images/iphone17.jpg', '手机', 'Apple', '{"颜色":"樱语粉","存储":"512GB","屏幕":"6.1英寸","芯片":"A19","网络":"5G"}', 58920, 9120, FALSE, 1, NOW(), NOW(), 1, 1),
+('iPhone 17 128GB 午夜色', 649900, 850, 'https://example.com/images/iphone17.jpg', '手机', 'Apple', '{"颜色":"午夜色","存储":"128GB","屏幕":"6.1英寸","芯片":"A19","网络":"5G"}', 109870, 18760, FALSE, 1, NOW(), NOW(), 1, 1),
+('iPhone 17 Plus 256GB 海沫绿', 849900, 600, 'https://example.com/images/iphone17-plus.jpg', '手机', 'Apple', '{"颜色":"海沫绿","存储":"256GB","屏幕":"6.7英寸","芯片":"A19","网络":"5G"}', 78920, 13240, FALSE, 1, NOW(), NOW(), 1, 1),
+('iPhone 17 Plus 512GB 星光白', 999900, 380, 'https://example.com/images/iphone17-plus.jpg', '手机', 'Apple', '{"颜色":"星光白","存储":"512GB","屏幕":"6.7英寸","芯片":"A19","网络":"5G"}', 47650, 7650, FALSE, 1, NOW(), NOW(), 1, 1),
+('iPhone 17 Air 256GB 极光银', 799900, 500, 'https://example.com/images/iphone17-air.jpg', '手机', 'Apple', '{"颜色":"极光银","存储":"256GB","屏幕":"6.6英寸","芯片":"A19","网络":"5G","备注":"超薄机身5.5mm"}', 52140, 8670, TRUE, 1, NOW(), NOW(), 1, 1),
+('iPhone 17 Air 512GB 薄暮蓝', 949900, 320, 'https://example.com/images/iphone17-air.jpg', '手机', 'Apple', '{"颜色":"薄暮蓝","存储":"512GB","屏幕":"6.6英寸","芯片":"A19","网络":"5G","备注":"超薄机身5.5mm"}', 31230, 5340, FALSE, 1, NOW(), NOW(), 1, 1),
+('iPhone 17e 256GB 星辰黑', 499900, 550, 'https://example.com/images/iphone17e.jpg', '手机', 'Apple', '{"颜色":"星辰黑","存储":"256GB","屏幕":"6.1英寸","芯片":"A19","网络":"5G"}', 39870, 6780, FALSE, 1, NOW(), NOW(), 1, 1);
+
 -- ======== Samsung (30条) ========
 INSERT INTO item.item (name, price, stock, image, category, brand, spec, sold, comment_count, is_ad, status, create_time, update_time, creater, updater) VALUES
 ('Samsung Galaxy S25 Ultra 256GB 钛灰色', 969900, 450, 'https://example.com/images/s25ultra.jpg', '手机', 'Samsung', '{"颜色":"钛灰色","存储":"256GB","屏幕":"6.9英寸","芯片":"骁龙8 Elite"}', 72340, 11560, TRUE, 1, NOW(), NOW(), 1, 1),
@@ -207,4 +224,78 @@ INSERT INTO item.item (name, price, stock, image, category, brand, spec, sold, c
 ('索尼 Xperia 1 VI 512GB 墨黑', 899900, 60, 'https://example.com/images/xperia1vi.jpg', '手机', '索尼', '{"颜色":"墨黑","存储":"512GB","屏幕":"6.5英寸4K","芯片":"骁龙8 Gen3"}', 7890, 1560, FALSE, 1, NOW(), NOW(), 1, 1),
 ('摩托罗拉 razr 60 Ultra 512GB 星云蓝', 599900, 120, 'https://example.com/images/razr60ultra.jpg', '手机', '摩托罗拉', '{"颜色":"星云蓝","存储":"512GB","屏幕":"6.9英寸折叠","芯片":"骁龙8 Elite"}', 12340, 2670, FALSE, 1, NOW(), NOW(), 1, 1);
 
--- 合计约155条手机数据
+-- 合计约205条数据 (手机~155 + 平板30 + 电脑20)
+
+-- ======== Apple iPad (10条) ========
+INSERT INTO item.item (name, price, stock, image, category, brand, spec, sold, comment_count, is_ad, status, create_time, update_time, creater, updater) VALUES
+('iPad Pro 13 M4 256GB 深空黑色', 899900, 300, 'https://example.com/images/ipadpro13m4.jpg', '平板', 'Apple', '{"颜色":"深空黑色","存储":"256GB","屏幕":"13英寸","芯片":"M4"}', 45670, 8320, TRUE, 1, NOW(), NOW(), 1, 1),
+('iPad Pro 13 M4 512GB 银色', 1049900, 200, 'https://example.com/images/ipadpro13m4.jpg', '平板', 'Apple', '{"颜色":"银色","存储":"512GB","屏幕":"13英寸","芯片":"M4"}', 32140, 5890, FALSE, 1, NOW(), NOW(), 1, 1),
+('iPad Pro 11 M4 256GB 深空黑色', 699900, 400, 'https://example.com/images/ipadpro11m4.jpg', '平板', 'Apple', '{"颜色":"深空黑色","存储":"256GB","屏幕":"11英寸","芯片":"M4"}', 54320, 9760, TRUE, 1, NOW(), NOW(), 1, 1),
+('iPad Pro 11 M4 512GB 银色', 849900, 250, 'https://example.com/images/ipadpro11m4.jpg', '平板', 'Apple', '{"颜色":"银色","存储":"512GB","屏幕":"11英寸","芯片":"M4"}', 38650, 6980, FALSE, 1, NOW(), NOW(), 1, 1),
+('iPad Air M2 11英寸 128GB 星光色', 479900, 500, 'https://example.com/images/ipadairm2-11.jpg', '平板', 'Apple', '{"颜色":"星光色","存储":"128GB","屏幕":"11英寸","芯片":"M2"}', 67890, 12340, FALSE, 1, NOW(), NOW(), 1, 1),
+('iPad Air M2 11英寸 256GB 蓝色', 569900, 350, 'https://example.com/images/ipadairm2-11.jpg', '平板', 'Apple', '{"颜色":"蓝色","存储":"256GB","屏幕":"11英寸","芯片":"M2"}', 48760, 8760, FALSE, 1, NOW(), NOW(), 1, 1),
+('iPad Air M2 13英寸 256GB 深空灰', 659900, 280, 'https://example.com/images/ipadairm2-13.jpg', '平板', 'Apple', '{"颜色":"深空灰","存储":"256GB","屏幕":"13英寸","芯片":"M2"}', 34560, 6450, FALSE, 1, NOW(), NOW(), 1, 1),
+('iPad mini 7 128GB 粉色', 399900, 450, 'https://example.com/images/ipadmini7.jpg', '平板', 'Apple', '{"颜色":"粉色","存储":"128GB","屏幕":"8.3英寸","芯片":"A17 Pro"}', 56780, 10230, FALSE, 1, NOW(), NOW(), 1, 1),
+('iPad mini 7 256GB 紫色', 489900, 300, 'https://example.com/images/ipadmini7.jpg', '平板', 'Apple', '{"颜色":"紫色","存储":"256GB","屏幕":"8.3英寸","芯片":"A17 Pro"}', 38760, 7120, FALSE, 1, NOW(), NOW(), 1, 1),
+('iPad 第11代 256GB 银色', 349900, 600, 'https://example.com/images/ipad11.jpg', '平板', 'Apple', '{"颜色":"银色","存储":"256GB","屏幕":"10.9英寸","芯片":"A16"}', 87650, 16540, FALSE, 1, NOW(), NOW(), 1, 1);
+
+-- ======== 华为 MatePad (10条) ========
+INSERT INTO item.item (name, price, stock, image, category, brand, spec, sold, comment_count, is_ad, status, create_time, update_time, creater, updater) VALUES
+('华为 MatePad Pro 13.2 256GB 砚黑', 549900, 300, 'https://example.com/images/matepadpro132.jpg', '平板', '华为', '{"颜色":"砚黑","存储":"256GB","屏幕":"13.2英寸OLED","芯片":"麒麟9000s"}', 32450, 5980, TRUE, 1, NOW(), NOW(), 1, 1),
+('华为 MatePad Pro 13.2 512GB 晶钻白', 649900, 180, 'https://example.com/images/matepadpro132.jpg', '平板', '华为', '{"颜色":"晶钻白","存储":"512GB","屏幕":"13.2英寸OLED","芯片":"麒麟9000s"}', 21340, 3980, FALSE, 1, NOW(), NOW(), 1, 1),
+('华为 MatePad Pro 11 256GB 星河蓝', 429900, 350, 'https://example.com/images/matepadpro11.jpg', '平板', '华为', '{"颜色":"星河蓝","存储":"256GB","屏幕":"11英寸OLED","芯片":"麒麟9000s"}', 28760, 5230, TRUE, 1, NOW(), NOW(), 1, 1),
+('华为 MatePad Pro 11 512GB 曜金黑', 509900, 220, 'https://example.com/images/matepadpro11.jpg', '平板', '华为', '{"颜色":"曜金黑","存储":"512GB","屏幕":"11英寸OLED","芯片":"麒麟9000s"}', 19870, 3670, FALSE, 1, NOW(), NOW(), 1, 1),
+('华为 MatePad Air 12 256GB 羽砂白', 349900, 400, 'https://example.com/images/matepadair12.jpg', '平板', '华为', '{"颜色":"羽砂白","存储":"256GB","屏幕":"12英寸","芯片":"麒麟9000w"}', 38650, 7120, FALSE, 1, NOW(), NOW(), 1, 1),
+('华为 MatePad Air 12 512GB 曜石灰', 429900, 280, 'https://example.com/images/matepadair12.jpg', '平板', '华为', '{"颜色":"曜石灰","存储":"512GB","屏幕":"12英寸","芯片":"麒麟9000w"}', 26780, 4980, FALSE, 1, NOW(), NOW(), 1, 1),
+('华为 MatePad 11.5 SE 128GB 海岛蓝', 199900, 500, 'https://example.com/images/matepad115se.jpg', '平板', '华为', '{"颜色":"海岛蓝","存储":"128GB","屏幕":"11.5英寸","芯片":"麒麟710A"}', 56780, 10450, FALSE, 1, NOW(), NOW(), 1, 1),
+('华为 MatePad 11.5 SE 256GB 星云灰', 249900, 400, 'https://example.com/images/matepad115se.jpg', '平板', '华为', '{"颜色":"星云灰","存储":"256GB","屏幕":"11.5英寸","芯片":"麒麟710A"}', 43210, 7890, FALSE, 1, NOW(), NOW(), 1, 1),
+('华为 MatePad SE 11 128GB 星云灰', 149900, 600, 'https://example.com/images/matepadse11.jpg', '平板', '华为', '{"颜色":"星云灰","存储":"128GB","屏幕":"11英寸","芯片":"麒麟8系列"}', 87650, 16540, FALSE, 1, NOW(), NOW(), 1, 1),
+('华为 MatePad Pro 13.2 柔光版 512GB 晶钻白', 699900, 120, 'https://example.com/images/matepadpro132-paper.jpg', '平板', '华为', '{"颜色":"晶钻白","存储":"512GB","屏幕":"13.2英寸柔光屏","芯片":"麒麟9000s"}', 12340, 2340, TRUE, 1, NOW(), NOW(), 1, 1);
+
+-- ======== 小米平板 (5条) ========
+INSERT INTO item.item (name, price, stock, image, category, brand, spec, sold, comment_count, is_ad, status, create_time, update_time, creater, updater) VALUES
+('小米平板 7 Pro 256GB 黑色', 329900, 350, 'https://example.com/images/mipad7pro.jpg', '平板', '小米', '{"颜色":"黑色","存储":"256GB","屏幕":"12.4英寸","芯片":"骁龙8 Gen2"}', 38920, 7230, TRUE, 1, NOW(), NOW(), 1, 1),
+('小米平板 7 Pro 512GB 远山蓝', 399900, 220, 'https://example.com/images/mipad7pro.jpg', '平板', '小米', '{"颜色":"远山蓝","存储":"512GB","屏幕":"12.4英寸","芯片":"骁龙8 Gen2"}', 27650, 5120, FALSE, 1, NOW(), NOW(), 1, 1),
+('小米平板 7 256GB 深空灰', 249900, 450, 'https://example.com/images/mipad7.jpg', '平板', '小米', '{"颜色":"深空灰","存储":"256GB","屏幕":"11英寸","芯片":"骁龙7+ Gen3"}', 43210, 8120, FALSE, 1, NOW(), NOW(), 1, 1),
+('小米平板 6S Pro 512GB 黑色', 299900, 300, 'https://example.com/images/mipad6spro.jpg', '平板', '小米', '{"颜色":"黑色","存储":"512GB","屏幕":"12.4英寸","芯片":"骁龙8 Gen2"}', 56780, 10450, FALSE, 1, NOW(), NOW(), 1, 1),
+('小米平板 6 256GB 烟青绿', 179900, 500, 'https://example.com/images/mipad6.jpg', '平板', '小米', '{"颜色":"烟青绿","存储":"256GB","屏幕":"11英寸","芯片":"骁龙870"}', 98760, 18790, FALSE, 1, NOW(), NOW(), 1, 1);
+
+-- ======== Samsung平板 (5条) ========
+INSERT INTO item.item (name, price, stock, image, category, brand, spec, sold, comment_count, is_ad, status, create_time, update_time, creater, updater) VALUES
+('Samsung Galaxy Tab S10 Ultra 256GB 钛灰色', 799900, 150, 'https://example.com/images/tabs10ultra.jpg', '平板', 'Samsung', '{"颜色":"钛灰色","存储":"256GB","屏幕":"14.6英寸","芯片":"天玑9300+"}', 19870, 3780, TRUE, 1, NOW(), NOW(), 1, 1),
+('Samsung Galaxy Tab S10 Ultra 512GB 钛黑色', 949900, 100, 'https://example.com/images/tabs10ultra.jpg', '平板', 'Samsung', '{"颜色":"钛黑色","存储":"512GB","屏幕":"14.6英寸","芯片":"天玑9300+"}', 13450, 2670, FALSE, 1, NOW(), NOW(), 1, 1),
+('Samsung Galaxy Tab S10+ 256GB 雅岩灰', 599900, 200, 'https://example.com/images/tabs10plus.jpg', '平板', 'Samsung', '{"颜色":"雅岩灰","存储":"256GB","屏幕":"12.4英寸","芯片":"天玑9300+"}', 28760, 5340, FALSE, 1, NOW(), NOW(), 1, 1),
+('Samsung Galaxy Tab S9 FE 256GB 薄荷绿', 349900, 300, 'https://example.com/images/tabs9fe.jpg', '平板', 'Samsung', '{"颜色":"薄荷绿","存储":"256GB","屏幕":"10.9英寸","芯片":"Exynos 1380"}', 45670, 8760, FALSE, 1, NOW(), NOW(), 1, 1),
+('Samsung Galaxy Tab S9 FE+ 256GB 薰衣紫', 429900, 220, 'https://example.com/images/tabs9feplus.jpg', '平板', 'Samsung', '{"颜色":"薰衣紫","存储":"256GB","屏幕":"12.4英寸","芯片":"Exynos 1380"}', 34560, 6540, FALSE, 1, NOW(), NOW(), 1, 1);
+
+-- ======== Apple MacBook (5条) ========
+INSERT INTO item.item (name, price, stock, image, category, brand, spec, sold, comment_count, is_ad, status, create_time, update_time, creater, updater) VALUES
+('MacBook Pro 14 M4 512GB 深空黑色', 1499900, 200, 'https://example.com/images/mbp14m4.jpg', '电脑', 'Apple', '{"颜色":"深空黑色","存储":"512GB","屏幕":"14.2英寸","芯片":"M4","内存":"16GB"}', 21340, 4230, TRUE, 1, NOW(), NOW(), 1, 1),
+('MacBook Pro 14 M4 Pro 1TB 银色', 1999900, 120, 'https://example.com/images/mbp14m4pro.jpg', '电脑', 'Apple', '{"颜色":"银色","存储":"1TB","屏幕":"14.2英寸","芯片":"M4 Pro","内存":"24GB"}', 15670, 3120, TRUE, 1, NOW(), NOW(), 1, 1),
+('MacBook Pro 16 M4 Max 1TB 深空黑色', 2799900, 60, 'https://example.com/images/mbp16m4max.jpg', '电脑', 'Apple', '{"颜色":"深空黑色","存储":"1TB","屏幕":"16.2英寸","芯片":"M4 Max","内存":"36GB"}', 9870, 1980, FALSE, 1, NOW(), NOW(), 1, 1),
+('MacBook Air 15 M3 512GB 午夜色', 1099900, 300, 'https://example.com/images/mba15m3.jpg', '电脑', 'Apple', '{"颜色":"午夜色","存储":"512GB","屏幕":"15.3英寸","芯片":"M3","内存":"16GB"}', 38920, 7230, FALSE, 1, NOW(), NOW(), 1, 1),
+('MacBook Air 13 M3 256GB 星光色', 899900, 400, 'https://example.com/images/mba13m3.jpg', '电脑', 'Apple', '{"颜色":"星光色","存储":"256GB","屏幕":"13.6英寸","芯片":"M3","内存":"8GB"}', 54320, 10230, FALSE, 1, NOW(), NOW(), 1, 1);
+
+-- ======== 华为 MateBook (5条) ========
+INSERT INTO item.item (name, price, stock, image, category, brand, spec, sold, comment_count, is_ad, status, create_time, update_time, creater, updater) VALUES
+('华为 MateBook X Pro 2025 1TB 砚黑', 1299900, 150, 'https://example.com/images/matebookxpro2025.jpg', '电脑', '华为', '{"颜色":"砚黑","存储":"1TB","屏幕":"14.2英寸OLED","芯片":"Intel Ultra 9","内存":"32GB"}', 12340, 2450, TRUE, 1, NOW(), NOW(), 1, 1),
+('华为 MateBook X Pro 2025 512GB 皓月银', 1099900, 200, 'https://example.com/images/matebookxpro2025.jpg', '电脑', '华为', '{"颜色":"皓月银","存储":"512GB","屏幕":"14.2英寸OLED","芯片":"Intel Ultra 7","内存":"16GB"}', 9870, 1890, FALSE, 1, NOW(), NOW(), 1, 1),
+('华为 MateBook 16s 512GB 深空灰', 799900, 250, 'https://example.com/images/matebook16s.jpg', '电脑', '华为', '{"颜色":"深空灰","存储":"512GB","屏幕":"16英寸","芯片":"Intel Ultra 7","内存":"16GB"}', 16780, 3120, FALSE, 1, NOW(), NOW(), 1, 1),
+('华为 MateBook D 16 512GB 深空灰', 549900, 400, 'https://example.com/images/matebookd16.jpg', '电脑', '华为', '{"颜色":"深空灰","存储":"512GB","屏幕":"16英寸","芯片":"Intel Ultra 5","内存":"16GB"}', 28760, 5340, FALSE, 1, NOW(), NOW(), 1, 1),
+('华为 MateBook 14 512GB 皓月银', 629900, 350, 'https://example.com/images/matebook14.jpg', '电脑', '华为', '{"颜色":"皓月银","存储":"512GB","屏幕":"14英寸","芯片":"Intel Ultra 5","内存":"16GB"}', 34560, 6450, FALSE, 1, NOW(), NOW(), 1, 1);
+
+-- ======== 联想 (5条) ========
+INSERT INTO item.item (name, price, stock, image, category, brand, spec, sold, comment_count, is_ad, status, create_time, update_time, creater, updater) VALUES
+('ThinkPad X1 Carbon Gen 13 512GB 黑色', 1199900, 150, 'https://example.com/images/x1cgen13.jpg', '电脑', '联想', '{"颜色":"黑色","存储":"512GB","屏幕":"14英寸","芯片":"Intel Ultra 7","内存":"32GB"}', 9870, 1980, TRUE, 1, NOW(), NOW(), 1, 1),
+('ThinkPad X1 Carbon Gen 13 1TB 黑色', 1499900, 80, 'https://example.com/images/x1cgen13.jpg', '电脑', '联想', '{"颜色":"黑色","存储":"1TB","屏幕":"14英寸","芯片":"Intel Ultra 7","内存":"32GB"}', 6540, 1340, FALSE, 1, NOW(), NOW(), 1, 1),
+('联想 Yoga Pro 14s 512GB 深空灰', 799900, 200, 'https://example.com/images/yogapro14s.jpg', '电脑', '联想', '{"颜色":"深空灰","存储":"512GB","屏幕":"14.5英寸","芯片":"Intel Ultra 7","内存":"32GB"}', 16780, 3120, FALSE, 1, NOW(), NOW(), 1, 1),
+('联想 小新 Pro 16 512GB 鸽子灰', 649900, 350, 'https://example.com/images/xiaoxinpro16.jpg', '电脑', '联想', '{"颜色":"鸽子灰","存储":"512GB","屏幕":"16英寸","芯片":"Intel Ultra 5","内存":"16GB"}', 34560, 6540, FALSE, 1, NOW(), NOW(), 1, 1),
+('联想 小新 14 512GB 霜雪银', 499900, 500, 'https://example.com/images/xiaoxin14.jpg', '电脑', '联想', '{"颜色":"霜雪银","存储":"512GB","屏幕":"14英寸","芯片":"Intel Ultra 5","内存":"16GB"}', 56780, 10450, FALSE, 1, NOW(), NOW(), 1, 1);
+
+-- ======== Dell (5条) ========
+INSERT INTO item.item (name, price, stock, image, category, brand, spec, sold, comment_count, is_ad, status, create_time, update_time, creater, updater) VALUES
+('Dell XPS 14 512GB 铂金银', 1199900, 120, 'https://example.com/images/xps14.jpg', '电脑', 'Dell', '{"颜色":"铂金银","存储":"512GB","屏幕":"14.5英寸OLED","芯片":"Intel Ultra 7","内存":"16GB"}', 8790, 1760, TRUE, 1, NOW(), NOW(), 1, 1),
+('Dell XPS 14 1TB 石墨黑', 1499900, 80, 'https://example.com/images/xps14.jpg', '电脑', 'Dell', '{"颜色":"石墨黑","存储":"1TB","屏幕":"14.5英寸OLED","芯片":"Intel Ultra 9","内存":"32GB"}', 5670, 1120, FALSE, 1, NOW(), NOW(), 1, 1),
+('Dell XPS 16 1TB 铂金银', 1799900, 50, 'https://example.com/images/xps16.jpg', '电脑', 'Dell', '{"颜色":"铂金银","存储":"1TB","屏幕":"16.3英寸OLED","芯片":"Intel Ultra 9","内存":"32GB"}', 4320, 890, FALSE, 1, NOW(), NOW(), 1, 1),
+('Dell Inspiron 16 Plus 512GB 冰河蓝', 699900, 250, 'https://example.com/images/inspiron16plus.jpg', '电脑', 'Dell', '{"颜色":"冰河蓝","存储":"512GB","屏幕":"16英寸","芯片":"Intel Ultra 7","内存":"16GB"}', 21340, 4230, FALSE, 1, NOW(), NOW(), 1, 1),
+('Dell Inspiron 14 512GB 铂金银', 549900, 350, 'https://example.com/images/inspiron14.jpg', '电脑', 'Dell', '{"颜色":"铂金银","存储":"512GB","屏幕":"14英寸","芯片":"Intel Ultra 5","内存":"16GB"}', 34560, 6540, FALSE, 1, NOW(), NOW(), 1, 1);

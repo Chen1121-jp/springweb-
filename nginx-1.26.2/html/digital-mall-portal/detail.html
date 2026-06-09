@@ -215,8 +215,8 @@
       axios.get('/items/' + id)
         .then(function (res) {
           self.loading = false;
-          // 后端直接返回 ItemDTO: { id, name, price, stock, image, category, brand, spec, sold, commentCount, isAD, status }
-          self.item = res;
+          // Result<T> 统一返回: { code, msg, data: ItemDTO }
+          self.item = res.data;
         })
         .catch(function () {
           self.loading = false;

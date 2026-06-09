@@ -714,7 +714,7 @@ createApp({
       try {
         const res = await axios.get('/carts')
         // 后端返回 List<CartVO>，interceptor 已取 response.data
-        const list = Array.isArray(res) ? res : (res && res.list ? res.list : [])
+        const list = res.data || []
         this.cartItems = list.map(item => ({
           ...item,
           selected: item.selected !== undefined ? item.selected : (item.status === 1 && item.num <= (item.stock || 0)),

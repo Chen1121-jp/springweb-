@@ -105,9 +105,9 @@ createApp({
         password: this.password
       })
       .then(function (res) {
-        // login 接口直接返回 UserLoginVO: { userId, username, balance, token }
-        sessionStorage.setItem('token', res.token);
-        util.store.set('user-info', { userId: res.userId, username: res.username, balance: res.balance });
+        // Result<T> 统一返回: { code, msg, data: UserLoginVO }
+        sessionStorage.setItem('token', res.data.token);
+        util.store.set('user-info', { userId: res.data.userId, username: res.data.username, balance: res.data.balance });
 
         var returnUrl = sessionStorage.getItem('return-url') || '/';
         sessionStorage.removeItem('return-url');
@@ -129,8 +129,8 @@ createApp({
           this.errorMsg = '账号已被禁用，请联系管理员';
         } else if (status === 429) {
           this.errorMsg = '登录过于频繁，请稍后再试';
-        } else if (resp.data && resp.data.message) {
-          this.errorMsg = resp.data.message;
+        } else if (resp.data && (resp.data.msg || resp.data.message)) {
+          this.errorMsg = resp.data.msg || resp.data.message;
         } else {
           this.errorMsg = '登录失败，请稍后重试';
         }

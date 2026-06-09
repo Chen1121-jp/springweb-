@@ -10,14 +10,17 @@ CREATE SCHEMA IF NOT EXISTS seckill;
 -- IdType: INPUT (手动赋值 = item.id)
 -- -------------------------------------------
 CREATE TABLE IF NOT EXISTS seckill.seckill_item (
-    id            BIGINT        PRIMARY KEY,
-    seckill_price INTEGER       NOT NULL,
-    stock         INTEGER       NOT NULL,
-    begin_time    TIMESTAMP     NOT NULL,
-    end_time      TIMESTAMP     NOT NULL,
-    max_purchase  INTEGER       NOT NULL DEFAULT 1,
-    create_time   TIMESTAMP,
-    update_time   TIMESTAMP
+    id              BIGINT        PRIMARY KEY,
+    name            VARCHAR(255),
+    image           VARCHAR(512),
+    original_price  INTEGER,
+    seckill_price   INTEGER       NOT NULL,
+    stock           INTEGER       NOT NULL,
+    begin_time      TIMESTAMP     NOT NULL,
+    end_time        TIMESTAMP     NOT NULL,
+    max_purchase    INTEGER       NOT NULL DEFAULT 1,
+    create_time     TIMESTAMP,
+    update_time     TIMESTAMP
 );
 
 -- -------------------------------------------

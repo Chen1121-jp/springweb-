@@ -1,4 +1,9 @@
-com\digital\mall\file\config\MinioConfig.class
+com\digital\mall\file\service\impl\FileServiceImpl.class
 com\digital\mall\file\config\MinioProperties.class
-com\digital\mall\file\controller\FileController.class
 com\digital\mall\file\FileApplication.class
+com\digital\mall\file\domain\dto\FileInfoDTO.class
+com\digital\mall\file\controller\FileController.class
+com\digital\mall\file\config\MinioBucketInitializer.class
+com\digital\mall\file\domain\dto\FileInfoDTO$FileInfoDTOBuilder.class
+com\digital\mall\file\service\FileService.class
+com\digital\mall\file\config\MinioConfig.class

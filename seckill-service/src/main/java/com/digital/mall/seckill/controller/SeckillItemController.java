@@ -1,5 +1,6 @@
 package com.digital.mall.seckill.controller;
 
+import com.digital.mall.common.domain.Result;
 import com.digital.mall.seckill.domain.SeckillItem;
 import com.digital.mall.seckill.service.ISeckillItemService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,13 +20,14 @@ public class SeckillItemController {
 
     @Operation(summary = "添加秒杀商品接口")
     @PostMapping("/{id}")
-    public void addVoucher(@PathVariable("id") Long id) {
+    public Result<Void> addVoucher(@PathVariable("id") Long id) {
         seckillItemService.saveWithItemId(id);
+        return Result.ok();
     }
 
     @Operation(summary = "查询所有秒杀商品")
     @GetMapping
-    public List<SeckillItem> querySeckillItems() {
-        return seckillItemService.list();
+    public Result<List<SeckillItem>> querySeckillItems() {
+        return Result.ok(seckillItemService.list());
     }
 }

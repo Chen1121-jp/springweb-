@@ -1,7 +1,7 @@
 com\digital\mall\trade\domain\po\OrderDetail.class
-com\digital\mall\trade\mapper\OrderMapper.class
 com\digital\mall\trade\TradeApplication.class
 com\digital\mall\trade\controller\OrderController.class
+com\digital\mall\trade\mapper\OrderMapper.class
 com\digital\mall\trade\service\impl\OrderServiceImpl.class
 com\digital\mall\trade\mapper\OrderDetailMapper.class
 com\digital\mall\trade\service\IOrderService.class

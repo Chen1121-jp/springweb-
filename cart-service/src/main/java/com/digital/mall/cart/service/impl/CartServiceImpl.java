@@ -73,7 +73,7 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
         // 1. 获取商品 id
         Set<Long> itemIds = vos.stream().map(CartVO::getItemId).collect(Collectors.toSet());
         // 2. 查询商品（Feign 远程调用）
-        List<ItemDTO> items = itemClient.queryItemByIds(itemIds);
+        List<ItemDTO> items = itemClient.queryItemByIds(itemIds).getData();
         if (CollUtils.isEmpty(items)) {
             return;
         }

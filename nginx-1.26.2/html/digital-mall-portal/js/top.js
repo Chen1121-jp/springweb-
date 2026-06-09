@@ -13,6 +13,7 @@ const TopNav = {
         <li><a href="/" :class="{active: page==='home'}">🏠 首页</a></li>
         <li><a href="/search.html" :class="{active: page==='search'}">🔍 搜索</a></li>
         <li><a href="/seckill.html" :class="{active: page==='seckill'}">⚡ 秒杀</a></li>
+        <li><a href="/chat.html" :class="{active: page==='chat'}">🤖 AI客服</a></li>
         <li>
           <a href="/cart.html" class="cart-icon" :class="{active: page==='cart'}">
             🛒 购物车
@@ -43,7 +44,7 @@ const TopNav = {
     this.user = util.store.get("user-info");
     if (this.user) {
       axios.get("/carts")
-        .then(r => this.cartCount = Array.isArray(r) ? r.length : 0)
+        .then(r => this.cartCount = (r && r.data) ? r.data.length : 0)
         .catch(() => {});
     }
   },

@@ -2,7 +2,7 @@ package com.digital.mall.trade.listener;
 
 import com.digital.mall.api.client.PayClient;
 import com.digital.mall.api.dto.PayOrderDTO;
-import com.digital.mall.trade.constants.MqConstants;
+import com.digital.mall.common.constants.MQConstants;
 import com.digital.mall.trade.domain.po.Order;
 import com.digital.mall.trade.service.IOrderService;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +20,9 @@ public class OrderDelayMessageListener {
     private final PayClient payClient;
 
     @RabbitListener(bindings = @QueueBinding(
-            value = @Queue(name = MqConstants.DELAY_ORDER_QUEUE_NAME),
-            exchange = @Exchange(name = MqConstants.DELAY_EXCHANGE_NAME, delayed = "true"),
-            key = MqConstants.DELAY_ORDER_KEY
+            value = @Queue(name = MQConstants.TRADE_DELAY_QUEUE),
+            exchange = @Exchange(name = MQConstants.DELAY_EXCHANGE_NAME, delayed = "true"),
+            key = MQConstants.TRADE_DELAY_KEY
     ))
     public void listenOrderDelayMessage(Long orderId) {
         // 1. 查询订单状态
@@ -31,7 +31,7 @@ public class OrderDelayMessageListener {
             return;
         }
         // 2. 查询支付流水
-        PayOrderDTO payOrderDTO = payClient.queryPayOrderByBizOrderNo(orderId);
+        PayOrderDTO payOrderDTO = payClient.queryPayOrderByBizOrderNo(orderId).getData();
         if (payOrderDTO != null && payOrderDTO.getStatus() == 3) {
             // 已支付
             orderService.markOrderPaySuccess(orderId);
